@@ -66,10 +66,29 @@ function precachePatch(lump)
 
 function drawText(text, x, y)
 {
+	var w = 0;
 	for(var i = 0; i < text.length; i++)
 	{
 		var c = text.charAt(i);
-		if(hu_font[c.toUpperCase()]) ctx.fillText(c, x+(i*8), y+10);
+		if(hu_font[c.toUpperCase()])
+		{
+			var p = drawPatch(hu_font[c.toUpperCase()], x+w,y)
+			if(p)
+			{
+				if(w+p.width > width) break;
+				w+=p.width;
+			}
+			else
+			{
+				if(w+8 > width) break;
+				ctx.fillText(c, x+w, y+10);
+				w += 8;
+			}
+		}
+		else
+		{
+			w += 4;
+		}
 	}
 }
 
@@ -90,12 +109,13 @@ function drawPatch(patch, x, y)
 			}
 		}
 	}
+	return p;
 }
 
 function draw()
 {
 	ctx.clearRect(0, 0, width, height);
-	//drawPatch("TITLEPIC", 0, 0);
+	drawPatch("TITLEPIC", 0, 0);
 	ctx.fillStyle = "rgb(" + getPalette(184)[0] + ", " + getPalette(184)[1] + ", " + getPalette(184)[2] + ")";
 	drawText(loadText, 0, 0);
 	setTimeout(draw, 1000/fps);
