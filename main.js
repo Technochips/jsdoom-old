@@ -151,7 +151,7 @@ function run()
 }
 function update()
 {
-	//do something maybe
+	tipText = String(M_Random());
 }
 function draw()
 {
