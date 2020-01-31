@@ -3,15 +3,23 @@ var wad;
 var shownElements = ["wad-selection", "loading", "game"];
 
 var fps = 35;
-var width;
-var height;
+var width = 320;
+var height = 200;
+var cwidth;
+var cheight;
+var swidth;
+var sheight;
+var useBuffer = true;
+var screenBuffer = [];
+var oldBuffer = [];
 var ctx;
 
-var loadText = "Loading...";
+var tipText = "Loading...";
 
 var playpal = [[]];
 for(var i = 0; i < 256; i++) playpal[0][i] = [i, i, i];
 var playpalCurrent = 0;
+var playpalOld = 1;
 var patches = [];
 
 function getPalette(i)
@@ -23,13 +31,25 @@ function loadFile()
 {
 	setShown("game");
 	var canvas = document.getElementById("jsdoom-canvas");
-	width = canvas.width;
-	height = canvas.height;
+	cwidth = canvas.width;
+	cheight = canvas.height;
+	swidth = cwidth/width;
+	sheight = cheight/height;
+	for(var x = 0; x < width; x++)
+	{
+		screenBuffer[x] = []
+		oldBuffer[x] = []
+		for(var y = 0; y < height; y++)
+		{
+			screenBuffer[x][y] = 0;
+			oldBuffer[x][y] = 1;
+		}
+	}
 	if(canvas.getContext)
 	{
 		ctx = canvas.getContext("2d");
-		draw();
-		console.log("Started draw loop")
+		run();
+		console.log("Started loop")
 	}
 	var reader = new FileReader();
     reader.onload = function(){
@@ -64,6 +84,19 @@ function precachePatch(lump)
 	return patches[lump];
 }
 
+function drawPixel(color, x, y)
+{
+	if(useBuffer)
+	{
+		screenBuffer[x][y] = color;
+	}
+	else
+	{
+		ctx.fillStyle = "rgb(" + getPalette(color)[0] + ", " + getPalette(color)[1] + ", " + getPalette(color)[2] + ")";
+		ctx.fillRect(x,y,1,1);
+	}
+}
+
 function drawText(text, x, y)
 {
 	var w = 0;
@@ -78,7 +111,7 @@ function drawText(text, x, y)
 				if(w+p.width > width) break;
 				w+=p.width;
 			}
-			else
+			else if(!useBuffer)
 			{
 				if(w+8 > width) break;
 				ctx.fillText(c, x+w, y+10);
@@ -103,22 +136,46 @@ function drawPatch(patch, x, y)
 			{
 				if(p.img[w][h] >= 0)
 				{
-					ctx.fillStyle = "rgb(" + getPalette(p.img[w][h])[0] + ", " + getPalette(p.img[w][h])[1] + ", " + getPalette(p.img[w][h])[2] + ")";
-					ctx.fillRect(x+w-p.xOffset,y+h-p.yOffset, 1, 1)
+					drawPixel(p.img[w][h],x+w-p.xOffset,y+h-p.yOffset)
 				}
 			}
 		}
 	}
 	return p;
 }
-
+function run()
+{
+	setTimeout(run, 1000/fps);
+	update();
+	draw();
+}
+function update()
+{
+	//do something maybe
+}
 function draw()
 {
-	ctx.clearRect(0, 0, width, height);
 	drawPatch("TITLEPIC", 0, 0);
-	ctx.fillStyle = "rgb(" + getPalette(184)[0] + ", " + getPalette(184)[1] + ", " + getPalette(184)[2] + ")";
-	drawText(loadText, 0, 0);
-	setTimeout(draw, 1000/fps);
+	drawText(tipText, 0, 0);
+	if(useBuffer)
+	{
+		for(var x = 0; x < width; x++)
+		{
+			for(var y = 0; y < height; y++)
+			{
+				if(/*playpalCurrent != playpalOld ||*/ screenBuffer[x][y] != oldBuffer[x][y])
+				{
+					ctx.fillStyle = "rgb(" + getPalette(screenBuffer[x][y])[0] + ", " + getPalette(screenBuffer[x][y])[1] + ", " + getPalette(screenBuffer[x][y])[2] + ")";
+					ctx.fillRect(x*swidth,y*sheight,swidth,sheight);
+				}
+			}
+		}
+	}
+	oldBuffer = [];
+	for(var x = 0; x < width; x++)
+	{
+		oldBuffer[x] = screenBuffer[x].slice();
+	}
 }
 
 setShown("wad-selection");
