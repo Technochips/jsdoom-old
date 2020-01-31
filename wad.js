@@ -30,7 +30,7 @@ class WAD
 				for(var k = 0; k < l-1; k++)
 				{
 					playpal[k] = []
-					for(var j = 0; j < 255; j++) playpal[k][j] = [this.lumps[i].lumpDataView.getUint8((k*768)+(j*3)),this.lumps[i].lumpDataView.getUint8((k*768)+(j*3+1)),this.lumps[i].lumpDataView.getUint8((k*768)+(j*3+2))];
+					for(var j = 0; j < 256; j++) playpal[k][j] = [this.lumps[i].lumpDataView.getUint8((k*768)+(j*3)),this.lumps[i].lumpDataView.getUint8((k*768)+(j*3+1)),this.lumps[i].lumpDataView.getUint8((k*768)+(j*3+2))];
 				}
 				console.log("Loaded " + l + " palettes.");
 			}
