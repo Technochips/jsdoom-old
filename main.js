@@ -10,7 +10,7 @@ var ctx;
 var loadText = "Loading...";
 
 var playpal = [[]];
-for(var i = 0; i < 255; i++) playpal[0][i] = [i, i, i];
+for(var i = 0; i < 256; i++) playpal[0][i] = [i, i, i];
 var playpalCurrent = 0;
 var patches = [];
 
@@ -66,7 +66,11 @@ function precachePatch(lump)
 
 function drawText(text, x, y)
 {
-	ctx.fillText(text, x, y+10);
+	for(var i = 0; i < text.length; i++)
+	{
+		var c = text.charAt(i);
+		if(hu_font[c.toUpperCase()]) ctx.fillText(c, x+(i*8), y+10);
+	}
 }
 
 function drawPatch(patch, x, y)
@@ -91,7 +95,7 @@ function drawPatch(patch, x, y)
 function draw()
 {
 	ctx.clearRect(0, 0, width, height);
-	drawPatch("TITLEPIC", 0, 0);
+	//drawPatch("TITLEPIC", 0, 0);
 	ctx.fillStyle = "rgb(" + getPalette(184)[0] + ", " + getPalette(184)[1] + ", " + getPalette(184)[2] + ")";
 	drawText(loadText, 0, 0);
 	setTimeout(draw, 1000/fps);
