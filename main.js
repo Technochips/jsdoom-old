@@ -21,6 +21,7 @@ for(var i = 0; i < 256; i++) playpal[0][i] = [i, i, i];
 var playpalCurrent = 0;
 var playpalOld = 1;
 var patches = [];
+var frame = 0;
 
 function getPalette(i)
 {
@@ -146,35 +147,52 @@ function drawPatch(patch, x, y)
 function run()
 {
 	setTimeout(run, 1000/fps);
-	update();
-	draw();
+	if(!wipe.gonnaWipe)
+	{
+		update();
+		draw();
+	}
+	if(wipe.gonnaWipe)
+	{
+		wipe.wipe();
+	}
+	applyBuffer();
 }
 function update()
 {
+	frame++;
 	tipText = String(M_Random());
+	if(frame == 175)
+	{
+		wipe.startWiping();
+	}
 }
 function draw()
 {
-	drawPatch("TITLEPIC", 0, 0);
+	drawPatch(frame < 175 ? "TITLEPIC" : "CREDIT", 0, 0);
 	drawText(tipText, 0, 0);
+}
+function applyBuffer()
+{
 	if(useBuffer)
 	{
 		for(var x = 0; x < width; x++)
 		{
 			for(var y = 0; y < height; y++)
 			{
-				if(/*playpalCurrent != playpalOld ||*/ screenBuffer[x][y] != oldBuffer[x][y])
+				if(playpalCurrent != playpalOld || screenBuffer[x][y] != oldBuffer[x][y])
 				{
 					ctx.fillStyle = "rgb(" + getPalette(screenBuffer[x][y])[0] + ", " + getPalette(screenBuffer[x][y])[1] + ", " + getPalette(screenBuffer[x][y])[2] + ")";
 					ctx.fillRect(x*swidth,y*sheight,swidth,sheight);
 				}
 			}
 		}
-	}
-	oldBuffer = [];
-	for(var x = 0; x < width; x++)
-	{
-		oldBuffer[x] = screenBuffer[x].slice();
+		oldBuffer = [];
+		for(var x = 0; x < width; x++)
+		{
+			oldBuffer[x] = screenBuffer[x].slice();
+		}
+		playpalOld = playpalCurrent;
 	}
 }
 
