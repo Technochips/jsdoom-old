@@ -12,6 +12,7 @@ var loadText = "Loading...";
 var playpal = [[]];
 for(var i = 0; i < 255; i++) playpal[0][i] = [i, i, i];
 var playpalCurrent = 0;
+var patches = [];
 
 function getPalette(i)
 {
@@ -53,14 +54,44 @@ function setShown(e, loadMsg)
 	}
 }
 
+function precachePatch(lump)
+{
+	if(!patches[lump] && wad)
+	{
+		var l = wad.getFirstLump(lump);
+		if(l) patches[lump] = new Patch(l);
+	}
+	return patches[lump];
+}
+
 function drawText(text, x, y)
 {
 	ctx.fillText(text, x, y+10);
 }
 
+function drawPatch(patch, x, y)
+{
+	var p = precachePatch(patch);
+	if(p)
+	{
+		for(var w = 0; w < p.width; w++)
+		{
+			for(var h = 0; h < p.height; h++)
+			{
+				if(p.img[w][h] >= 0)
+				{
+					ctx.fillStyle = "rgb(" + getPalette(p.img[w][h])[0] + ", " + getPalette(p.img[w][h])[1] + ", " + getPalette(p.img[w][h])[2] + ")";
+					ctx.fillRect(x+w-p.xOffset,y+h-p.yOffset, 1, 1)
+				}
+			}
+		}
+	}
+}
+
 function draw()
 {
 	ctx.clearRect(0, 0, width, height);
+	drawPatch("TITLEPIC", 0, 0);
 	ctx.fillStyle = "rgb(" + getPalette(184)[0] + ", " + getPalette(184)[1] + ", " + getPalette(184)[2] + ")";
 	drawText(loadText, 0, 0);
 	setTimeout(draw, 1000/fps);
