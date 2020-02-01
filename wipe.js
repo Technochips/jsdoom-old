@@ -46,6 +46,7 @@ wipe.wipe = function()
 	{
 		if(wipe.columns[x] < 0)
 		{
+			nothing = false;
 			wipe.columns[x]++;
 			for(var y = 0; y < height; y++)
 			{

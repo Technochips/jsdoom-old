@@ -21,7 +21,7 @@ gamestates["title"].update = function()
 	this.frame++;
 	if(!this.cycles[this.cycle] || this.frame >= 175)
 	{
-		changeState("title");
+		changeState("title", true);
 	}
 }
 gamestates["title"].draw = function()

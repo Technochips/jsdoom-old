@@ -1,7 +1,8 @@
 var gamestate = "title"
 var gamestates = []
+var title = true
 
-function changeState(state, ...args)
+function changeState(state, isTitle, ...args)
 {
 	if(gamestates[state])
 	{
@@ -9,5 +10,6 @@ function changeState(state, ...args)
 		gamestates[state].changedTo(...args);
 		wipe.startWiping();
 		console.log("Switching to state \"" + state + "\"");
+		title = isTitle;
 	}
 }

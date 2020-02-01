@@ -5,6 +5,7 @@ var shownElements = ["wad-selection", "loading", "game"];
 var fps = 35;
 var ms = 1000/fps;
 
+var canvas;
 var width = 320;
 var height = 200;
 var cwidth;
@@ -42,36 +43,49 @@ function getPalette(i)
 function loadFile()
 {
 	setShown("game");
-	var canvas = document.getElementById("jsdoom-canvas");
+	canvas = document.getElementById("jsdoom-canvas");
+
 	cwidth = canvas.width;
 	cheight = canvas.height;
 	swidth = cwidth/width;
 	sheight = cheight/height;
+
 	for(var x = 0; x < width; x++)
 	{
-		screenBuffer[x] = []
-		oldBuffer[x] = []
+		screenBuffer[x] = [];
+		oldBuffer[x] = [];
 		for(var y = 0; y < height; y++)
 		{
 			screenBuffer[x][y] = 0;
 			oldBuffer[x][y] = 1;
 		}
 	}
+
 	if(canvas.getContext)
 	{
 		ctx = canvas.getContext("2d");
 		ctxData = ctx.getImageData(0, 0, cwidth, cheight);
 	}
+
 	var reader = new FileReader();
-    reader.onload = function(){
-		console.log("Loading WAD data...")
+    reader.onload = function()
+	{
+		console.log("Loading WAD data...");
 		var data = reader.result;
 		wad = new WAD(data);
-		setTimeout(run, 0, performance.now())
-		console.log("Started loop")
-    };
-	console.log("Reading file")
+
+		init();
+    }
+	console.log("Reading file");
     reader.readAsArrayBuffer(document.getElementsByName("iwad")[0].files[0]);
+}
+
+function init()
+{
+	setTimeout(run, 0, performance.now());
+	console.log("Started loop");
+	
+	menu.init();
 }
 
 function setShown(e, loadMsg)
@@ -197,10 +211,12 @@ function update()
 		}
 	}	
 	gamestates[gamestate].update();
+	menu.update();
 }
 function draw()
 {
 	gamestates[gamestate].draw();
+	menu.draw();
 }
 function applyBuffer()
 {
