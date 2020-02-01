@@ -3,6 +3,8 @@ var wad;
 var shownElements = ["wad-selection", "loading", "game"];
 
 var fps = 35;
+var ms = 1000/fps;
+
 var width = 320;
 var height = 200;
 var cwidth;
@@ -146,7 +148,7 @@ function drawPatch(patch, x, y)
 }
 function run()
 {
-	setTimeout(run, 1000/fps);
+	setTimeout(run, ms);
 	if(!wipe.gonnaWipe)
 	{
 		update();

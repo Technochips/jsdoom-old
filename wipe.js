@@ -5,7 +5,6 @@ wipe.wiping = false;
 wipe.startScreen;
 wipe.endScreen;
 wipe.columns = [];
-wipe.frame;
 
 wipe.startWiping = function()
 {
@@ -13,7 +12,6 @@ wipe.startWiping = function()
 	wipe.columns = [];
 	wipe.startScreen = [];
 	wipe.endScreen = [];
-	wipe.frame = 0;
 }
 wipe.end = function()
 {
@@ -25,7 +23,7 @@ wipe.end = function()
 }
 wipe.wipe = function()
 {
-	wipe.frame++;
+	var w = width/2;
 	if(!wipe.wiping)
 	{
 		wipe.wiping = true;
@@ -34,46 +32,48 @@ wipe.wipe = function()
 			wipe.startScreen[x] = oldBuffer[x].slice();
 			wipe.endScreen[x] = screenBuffer[x].slice();
 		}
+		wipe.columns[0] = -(M_Random()%16);
+		for(var x = 1; x < w; x++)
+		{
+			var r = (M_Random()%3) - 1
+			wipe.columns[x] = wipe.columns[x-1] + r;
+			if(wipe.columns[x] > 0) wipe.columns[x] = 0;
+			else if(wipe.columns[x] == -16) wipe.columns[x] = -15;
+		}
 	}
-	var w = width/2;
 	var nothing = true;
 	for(var x = 0; x < w; x++)
 	{
-		if(!wipe.columns[x])
+		if(wipe.columns[x] < 0)
 		{
-			wipe.columns[x] = {};
-			wipe.columns[x].initiazeAt = Math.floor(M_Random()/(255/8))+1;
-		}
-		if(!wipe.columns[x].initiazed) wipe.columns[x].initiazed = wipe.frame >= wipe.columns[x].initiazeAt;
-		if(wipe.columns[x].initiazed)
-		{
-			for(var y = height-1; y >= 0; y--)
+			wipe.columns[x]++;
+			for(var y = 0; y < height; y++)
 			{
-				if(y - 8 > 0)
+				for(var T = 0; T <= 1; T++)
 				{
-					wipe.startScreen[x*2][y] = wipe.startScreen[x*2][y-8];
-					wipe.startScreen[(x*2)+1][y] = wipe.startScreen[(x*2)+1][y-8];
-				}
-				else
-				{
-					wipe.startScreen[x*2][y] = -1;
-					wipe.startScreen[(x*2)+1][y] = -1;
+					screenBuffer[(x*2)+T][y] = wipe.startScreen[(x*2)+T][y];
 				}
 			}
 		}
-	}
-	for(var x = 0; x < width; x++)
-	{
-		for(var y = 0; y < height; y++)
+		else if(wipe.columns[x] >= 0)
 		{
-			if(wipe.startScreen[x][y] > -1)
+			if(wipe.columns[x] < height) nothing = false;
+			var dy = (wipe.columns[x] < 16) ? wipe.columns[x]+1 : 8;
+			if(wipe.columns[x] + dy >= height) dy = height - wipe.columns[x];
+			wipe.columns[x]+=dy;
+			for(var y = 0; y < height; y++)
 			{
-				nothing = false;
-				screenBuffer[x][y] = wipe.startScreen[x][y];
-			}
-			else
-			{
-				screenBuffer[x][y] = wipe.endScreen[x][y];
+				for(var T = 0; T <= 1; T++)
+				{
+					if(y < wipe.columns[x])
+					{
+						screenBuffer[(x*2)+T][y] = wipe.endScreen[(x*2)+T][y];
+					}
+					else
+					{
+						screenBuffer[(x*2)+T][y] = wipe.startScreen[(x*2)+T][y-wipe.columns[x]];
+					}
+				}
 			}
 		}
 	}
