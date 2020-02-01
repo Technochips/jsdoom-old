@@ -15,7 +15,6 @@ class WAD
 		
 		for(var i = 0; i < this.lumpCount; i++)
 		{
-			tipText = "Loading lump " + (i+1) + " out of " + this.lumpCount + "."
 			this.lumps[i] = []
 			this.lumps[i].lumpOffset = this.dataView.getInt32((this.dirOffset + (i*16)) + 0, true);
 			this.lumps[i].lumpLength = this.dataView.getInt32((this.dirOffset + (i*16)) + 4, true);

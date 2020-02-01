@@ -19,8 +19,6 @@ var oldBuffer = [];
 var ctx;
 var ctxData;
 
-var tipText = "Loading...";
-
 var playpal = [[]];
 for(var i = 0; i < 256; i++) playpal[0][i] = [i, i, i];
 var playpalCurrent = 0;
@@ -101,14 +99,17 @@ function precachePatch(lump)
 
 function drawPixel(color, x, y)
 {
-	if(useBuffer)
+	if(x >= 0 && x < width && y >= 0 && y < height)
 	{
-		screenBuffer[x][y] = color;
-	}
-	else
-	{
-		ctx.fillStyle = "rgb(" + getPalette(color)[0] + ", " + getPalette(color)[1] + ", " + getPalette(color)[2] + ")";
-		ctx.fillRect(x,y,1,1);
+		if(useBuffer)
+		{
+			screenBuffer[x][y] = color;
+		}
+		else
+		{
+			ctx.fillStyle = "rgb(" + getPalette(color)[0] + ", " + getPalette(color)[1] + ", " + getPalette(color)[2] + ")";
+			ctx.fillRect(x,y,1,1);
+		}
 	}
 }
 
@@ -179,13 +180,13 @@ function run(dt)
 	{
 		wipe.wipe();
 	}
+	drawText("fps: " + dt_fps.toFixed(2) + "\nms: " + dt_ms.toFixed(2), 0, 186);
 	applyBuffer();
 	if(fast) setTimeout(run, 0, [dt_now]);
 }
 function update()
 {
 	frame++;
-	tipText = "fps: " + dt_fps.toFixed(2) + "\nms: " + dt_ms.toFixed(2);
 	if(flashing)
 	{
 		if(playpalCurrent > 9) playpalCurrent --; //DEBUG STUFF
@@ -195,15 +196,11 @@ function update()
 			else playpalCurrent = 0;
 		}
 	}	
-	if(frame == 175)
-	{
-		wipe.startWiping();
-	}
+	gamestates[gamestate].update();
 }
 function draw()
 {
-	drawPatch(frame < 175 ? "TITLEPIC" : "CREDIT", 0, 0);
-	drawText(tipText, 0, 0);
+	gamestates[gamestate].draw();
 }
 function applyBuffer()
 {
@@ -220,8 +217,6 @@ function applyBuffer()
 					ctxData.data[c+1] = getPalette(screenBuffer[x][y])[1];
 					ctxData.data[c+2] = getPalette(screenBuffer[x][y])[2];
 					ctxData.data[c+3] = 255;
-					/*ctx.fillStyle = "rgb(" + getPalette(screenBuffer[x][y])[0] + ", " + getPalette(screenBuffer[x][y])[1] + ", " + getPalette(screenBuffer[x][y])[2] + ")";
-					ctx.fillRect(x*swidth,y*sheight,swidth,sheight);*/
 				}
 			}
 		}
