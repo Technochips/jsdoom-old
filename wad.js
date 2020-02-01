@@ -27,7 +27,7 @@ class WAD
 			if(this.lumps[i].name == "PLAYPAL")
 			{
 				var l = Math.floor(this.lumps[i].lumpLength / 768);
-				for(var k = 0; k < l-1; k++)
+				for(var k = 0; k < l; k++)
 				{
 					playpal[k] = []
 					for(var j = 0; j < 256; j++) playpal[k][j] = [this.lumps[i].lumpDataView.getUint8((k*768)+(j*3)),this.lumps[i].lumpDataView.getUint8((k*768)+(j*3+1)),this.lumps[i].lumpDataView.getUint8((k*768)+(j*3+2))];

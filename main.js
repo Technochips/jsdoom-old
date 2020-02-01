@@ -11,10 +11,13 @@ var cwidth;
 var cheight;
 var swidth;
 var sheight;
+
 var useBuffer = true;
 var screenBuffer = [];
 var oldBuffer = [];
+
 var ctx;
+var ctxData;
 
 var tipText = "Loading...";
 
@@ -25,9 +28,14 @@ var playpalOld = 1;
 var patches = [];
 var frame = 0;
 
+var flashing = false; //DEBUG
+
 function getPalette(i)
 {
-	return playpal[playpalCurrent][i];
+	if(playpal[playpalCurrent])
+		return playpal[playpalCurrent][i];
+	else
+		return playpal[0][i];
 }
 
 function loadFile()
@@ -51,14 +59,15 @@ function loadFile()
 	if(canvas.getContext)
 	{
 		ctx = canvas.getContext("2d");
-		run();
-		console.log("Started loop")
+		ctxData = ctx.getImageData(0, 0, cwidth, cheight);
 	}
 	var reader = new FileReader();
     reader.onload = function(){
 		console.log("Loading WAD data...")
 		var data = reader.result;
 		wad = new WAD(data);
+		run();
+		console.log("Started loop")
     };
 	console.log("Reading file")
     reader.readAsArrayBuffer(document.getElementsByName("iwad")[0].files[0]);
@@ -164,6 +173,15 @@ function update()
 {
 	frame++;
 	tipText = String(M_Random());
+	if(flashing)
+	{
+		if(playpalCurrent > 9) playpalCurrent --; //DEBUG STUFF
+		else
+		{
+			if(frame % fps === 0) playpalCurrent = 12;
+			else playpalCurrent = 0;
+		}
+	}
 	if(frame == 175)
 	{
 		wipe.startWiping();
@@ -182,13 +200,19 @@ function applyBuffer()
 		{
 			for(var y = 0; y < height; y++)
 			{
+				var c = (x+(y*cwidth))*4;
 				if(playpalCurrent != playpalOld || screenBuffer[x][y] != oldBuffer[x][y])
 				{
-					ctx.fillStyle = "rgb(" + getPalette(screenBuffer[x][y])[0] + ", " + getPalette(screenBuffer[x][y])[1] + ", " + getPalette(screenBuffer[x][y])[2] + ")";
-					ctx.fillRect(x*swidth,y*sheight,swidth,sheight);
+					ctxData.data[c] = getPalette(screenBuffer[x][y])[0];
+					ctxData.data[c+1] = getPalette(screenBuffer[x][y])[1];
+					ctxData.data[c+2] = getPalette(screenBuffer[x][y])[2];
+					ctxData.data[c+3] = 255;
+					/*ctx.fillStyle = "rgb(" + getPalette(screenBuffer[x][y])[0] + ", " + getPalette(screenBuffer[x][y])[1] + ", " + getPalette(screenBuffer[x][y])[2] + ")";
+					ctx.fillRect(x*swidth,y*sheight,swidth,sheight);*/
 				}
 			}
 		}
+		ctx.putImageData(ctxData, 0, 0);
 		oldBuffer = [];
 		for(var x = 0; x < width; x++)
 		{
