@@ -27,6 +27,8 @@ var playpalCurrent = 0;
 var playpalOld = 1;
 var patches = [];
 var frame = 0;
+var dt_fps = 0;
+var dt_ms = 0;
 
 var flashing = false; //DEBUG
 var fast = false;
@@ -67,7 +69,7 @@ function loadFile()
 		console.log("Loading WAD data...")
 		var data = reader.result;
 		wad = new WAD(data);
-		run();
+		setTimeout(run, 0, performance.now())
 		console.log("Started loop")
     };
 	console.log("Reading file")
@@ -113,12 +115,18 @@ function drawPixel(color, x, y)
 function drawText(text, x, y)
 {
 	var w = 0;
+	var h = 0;
 	for(var i = 0; i < text.length; i++)
 	{
 		var c = text.charAt(i);
-		if(hu_font[c.toUpperCase()])
+		if(c == "\n")
 		{
-			var p = drawPatch(hu_font[c.toUpperCase()], x+w,y)
+			w = 0;
+			h+=7;
+		}
+		else if(hu_font[c.toUpperCase()])
+		{
+			var p = drawPatch(hu_font[c.toUpperCase()], x+w,y+h)
 			if(p)
 			{
 				if(w+p.width > width) break;
@@ -127,7 +135,7 @@ function drawText(text, x, y)
 			else if(!useBuffer)
 			{
 				if(w+8 > width) break;
-				ctx.fillText(c, x+w, y+10);
+				ctx.fillText(c, x+w, y+h+10);
 				w += 8;
 			}
 		}
@@ -156,9 +164,12 @@ function drawPatch(patch, x, y)
 	}
 	return p;
 }
-function run()
+function run(dt)
 {
-	if(!fast) setTimeout(run, ms);
+	var dt_now = performance.now();
+	dt_ms = dt_now - dt;
+	dt_fps = 1/(dt_ms/1000);
+	if(!fast) setTimeout(run, ms, [dt_now]);
 	if(!wipe.gonnaWipe)
 	{
 		update();
@@ -169,12 +180,12 @@ function run()
 		wipe.wipe();
 	}
 	applyBuffer();
-	if(fast) setTimeout(run, 0);
+	if(fast) setTimeout(run, 0, [dt_now]);
 }
 function update()
 {
 	frame++;
-	tipText = String(M_Random());
+	tipText = "fps: " + dt_fps.toFixed(2) + "\nms: " + dt_ms.toFixed(2);
 	if(flashing)
 	{
 		if(playpalCurrent > 9) playpalCurrent --; //DEBUG STUFF
@@ -183,7 +194,7 @@ function update()
 			if(frame % fps === 0) playpalCurrent = 12;
 			else playpalCurrent = 0;
 		}
-	}
+	}	
 	if(frame == 175)
 	{
 		wipe.startWiping();
