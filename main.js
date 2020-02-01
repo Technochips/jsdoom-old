@@ -29,6 +29,7 @@ var patches = [];
 var frame = 0;
 
 var flashing = false; //DEBUG
+var fast = false;
 
 function getPalette(i)
 {
@@ -157,7 +158,7 @@ function drawPatch(patch, x, y)
 }
 function run()
 {
-	setTimeout(run, ms);
+	if(!fast) setTimeout(run, ms);
 	if(!wipe.gonnaWipe)
 	{
 		update();
@@ -168,6 +169,7 @@ function run()
 		wipe.wipe();
 	}
 	applyBuffer();
+	if(fast) setTimeout(run, 0);
 }
 function update()
 {
