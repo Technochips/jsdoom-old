@@ -32,6 +32,8 @@ var dt_ms = 0;
 var flashing = false; //DEBUG
 var fast = false;
 
+var gamemode = "indetermined";
+
 function getPalette(i)
 {
 	if(playpal[playpalCurrent])
@@ -73,11 +75,26 @@ function loadFile()
 		console.log("Loading WAD data...");
 		var data = reader.result;
 		wad = new WAD(data);
-
+		if(wad.getFirstLump("MAP02")) //map01 may be missing
+		{
+			gamemode = "commercial";
+		}
+		else if(!wad.getFirstLump("E2M1"))
+		{
+			gamemode = "shareware";
+		}
+		else if(!wad.getFirstLump("E4M1"))
+		{
+			gamemode = "registered";
+		}
+		else
+		{
+			gamemode = "retail";
+		}
 		init();
     }
 	console.log("Reading file");
-    reader.readAsArrayBuffer(document.getElementsByName("iwad")[0].files[0]);
+	reader.readAsArrayBuffer(document.getElementsByName("iwad")[0].files[0]);
 }
 
 function init()

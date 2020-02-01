@@ -34,7 +34,7 @@ class Menu
 
 menu.pause = function()
 {
-	currentMenu = "mainmenu";
+	menu.SetupNextMenu("mainmenu")
 	paused = true;
 }
 menu.unpause = function()
@@ -45,6 +45,19 @@ menu.unpause = function()
 menu.init = function()
 {
 	window.addEventListener("keydown", menu.onKeyDown, true);
+	switch(gamemode)
+	{
+		case "commercial":
+			menu["mainmenu"].menuitems[4] = menu["mainmenu"].menuitems[5];
+			menu["mainmenu"].numitems--;
+			menu["mainmenu"].y += 8;
+			menu["newgame"].prevMenu = "mainmenu";
+			break;
+		case "shareware":
+		case "registered":
+			menu["episode"].numitems--;
+			break;
+	}
 }
 
 menu.draw = function()
@@ -85,6 +98,7 @@ menu.update = function()
 
 menu.onKeyDown = function(e)
 {
+	if(wipe.wiping) return;
 	if(paused)
 	{
 		switch(e.keyCode)
@@ -128,7 +142,13 @@ menu["mainmenu"] = new Menu(
 	6,
 	null,
 	[
-		new Menuitem(1, "M_NGAME", "n", function(){console.log("new game yee");}),
+		new Menuitem(1, "M_NGAME", "n", function()
+		{
+			if(gamemode == "commercial")
+				menu.SetupNextMenu("newgame");
+			else
+				menu.SetupNextMenu("episode");
+		}),
 		new Menuitem(1, "M_OPTION", "o", null),
 		new Menuitem(1, "M_LOADG", "l", null),
 		new Menuitem(1, "M_SAVEG", "s", null),
@@ -141,10 +161,62 @@ menu["mainmenu"] = new Menu(
 	},
 	97, 64,
 	0
-)
+);
 
-menu.SetupNextMenu = function(menu)
+menu["episode"] = new Menu(
+	4,
+	"mainmenu",
+	[
+		new Menuitem(1, "M_EPI1", "k", function()
+		{
+			menu.SetupNextMenu("newgame");
+		}),
+		new Menuitem(1, "M_EPI2", "t", function()
+		{
+			menu.SetupNextMenu("newgame");
+		}),
+		new Menuitem(1, "M_EPI3", "i", function()
+		{
+			menu.SetupNextMenu("newgame");
+		}),
+		new Menuitem(1, "M_EPI4", "t", function()
+		{
+			menu.SetupNextMenu("newgame");
+		}),
+	],
+	function()
+	{
+		drawPatch("M_EPISOD", 54, 38);
+	},
+	48, 63,
+	0
+);
+
+menu["newgame"] = new Menu(
+	5,
+	"episode",
+	[
+		new Menuitem(1, "M_JKILL",	"i", null),
+		new Menuitem(1, "M_ROUGH",	"i", null),
+		new Menuitem(1, "M_HURT",	"i", null),
+		new Menuitem(1, "M_ULTRA",	"i", null),
+		new Menuitem(1, "M_NMARE",	"i", null),
+	],
+	function()
+	{
+		drawPatch("M_NEWG", 96, 14);
+		drawPatch("M_SKILL", 54, 38);
+	},
+	48, 63,
+	2
+);
+
+menu.SetupNextMenu = function(m)
 {
-	currentMenu = menu;
-	itemOn = currentMenu.lastOn;
+	if(menu[m])
+	{
+		menu[currentMenu].lastOn = itemOn;
+		currentMenu = m;
+		itemOn = menu[currentMenu].lastOn;
+	}
 }
