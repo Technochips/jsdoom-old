@@ -51,7 +51,7 @@ demo.loadDemo = function(lump)
 	demo.currentDemo = new Demo(lump);
 	demo.playingDemo = true;
 	demo.frame = 0;
-	changeState("game", gamemode == "commercial" ? ("MAP" + String(this.map).padStart(2, "0")) : ("E" + this.episode + "M" + this.map))
+	changeState("game", demo.currentDemo.map, demo.currentDemo.episode, demo.currentDemo.skill)
 }
 
 demo.update = function()

@@ -101,6 +101,8 @@ function update()
 	demo.update();
 	gamestates[gamestate].update();
 	menu.update();
+	
+	input.removeFirstInputs();
 }
 function draw()
 {
@@ -109,7 +111,6 @@ function draw()
 }
 function onKeyDown(e)
 {
-	menu.onKeyDown(e);
 	input.onKeyDown(e);
 	e.preventDefault();
 }

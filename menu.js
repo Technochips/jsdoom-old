@@ -127,78 +127,75 @@ menu.update = function()
 		this.whichSkull ^= 1;
 		this.skullAnimCounter = 8;
 	}
-}
 
-menu.onKeyDown = function(e)
-{
-	if(wipe.wiping) return;
 	if(menuactive)
 	{
-		if((e.code == "Escape" && !menu.message.toPrint) || (e.code == "Escape" && menu.message.toPrint && menu.message.needsInput) || (menu.message.toPrint && !menu.message.needsInput))
+		if(menu.message.toPrint)
+		{
+			if(menu.message.routine) menu.message.routine(input.firstKeyPressed());
+		}
+		if((input.firstInputs["Escape"] && !menu.message.toPrint) || ((input.firstInputs["Escape"]||input.firstInputs["KeyN"]) && menu.message.toPrint && menu.message.needsInput) || (input.hasKeyPressed() && menu.message.toPrint && !menu.message.needsInput))
 		{
 			menu.unpause();
 			sound.playSound("SWTCHX");
 			return;
 		}
-		if(menu.message.toPrint)
+		if(menu.message.toPrint) return;
+		if(input.firstInputs["ArrowUp"])
 		{
-			if(menu.message.routine) menu.message.routine(e.code);
-			return;
+			this.itemOn--;
+			if(this.itemOn < 0) this.itemOn = menu[this.currentMenu].numitems-1;
+			sound.playSound("PSTOP");
 		}
-		switch(e.code)
+		else if(input.firstInputs["ArrowDown"])
 		{
-			case "ArrowUp":
-				this.itemOn--;
-				if(this.itemOn < 0) this.itemOn = menu[this.currentMenu].numitems-1;
-				sound.playSound("PSTOP");
-				break;
-			case "ArrowDown":
-				this.itemOn++;
-				if(this.itemOn >= menu[this.currentMenu].numitems) this.itemOn = 0;
-				sound.playSound("PSTOP");
-				break;
-			case "Backspace":
-				if(menu[this.currentMenu].prevMenu)
+			this.itemOn++;
+			if(this.itemOn >= menu[this.currentMenu].numitems) this.itemOn = 0;
+			sound.playSound("PSTOP");
+		}
+		else if(input.firstInputs["Backspace"])
+		{
+			if(menu[this.currentMenu].prevMenu)
+			{
+				menu.SetupNextMenu(menu[this.currentMenu].prevMenu);
+				sound.playSound("SWTCHN");
+			}
+		}
+		else if(input.firstInputs["Enter"])
+		{
+			if(menu[this.currentMenu].menuitems[this.itemOn].routine)
+				menu[this.currentMenu].menuitems[this.itemOn].routine(this.itemOn);
+			sound.playSound("PISTOL");
+		}
+		else if(input.hasKeyPressed())
+		{
+			var x = this.itemOn;
+			for(var i = 0; i < menu[this.currentMenu].numitems; i++)
+			{
+				x++;
+				if(x >= menu[this.currentMenu].numitems) x = 0;
+				if(menu[this.currentMenu].menuitems[x].alphaKey == input.firstKeyPressed())
 				{
-					menu.SetupNextMenu(menu[this.currentMenu].prevMenu);
-					sound.playSound("SWTCHN");
+					this.itemOn = x;
+					sound.playSound("PSTOP");
+					break;
 				}
-				break;
-			case "Enter":
-				if(menu[this.currentMenu].menuitems[this.itemOn].routine)
-					menu[this.currentMenu].menuitems[this.itemOn].routine(this.itemOn);
-				sound.playSound("PISTOL");
-				break;
-			default:
-				var x = this.itemOn;
-				for(var i = 0; i < menu[this.currentMenu].numitems; i++)
-				{
-					x++;
-					if(x >= menu[this.currentMenu].numitems) x = 0;
-					if(menu[this.currentMenu].menuitems[x].alphaKey == e.code)
-					{
-						this.itemOn = x;
-						sound.playSound("PSTOP");
-						break;
-					}
-				}
-				break;
+			}
 		}
 	}
 	else
 	{
-		switch(e.code)
+		if(input.firstInputs["Escape"])
 		{
-			case "Escape":
+			menu.pause();
+			sound.playSound("SWTCHN");
+		}
+		else if(input.hasKeyPressed())
+		{
+			if(onTitle)
+			{
 				menu.pause();
-				sound.playSound("SWTCHN");
-				break;
-			default:
-				if(onTitle)
-				{
-					menu.pause();
-					break;
-				}
+			}
 		}
 	}
 }
@@ -221,7 +218,29 @@ menu.episodeRoutine = function(ep)
 		menu.message.startMessage(doom_txt["SWSTRING"], null, false);
 		return;
 	}
+	menu.wantedEpisode = ep;
 	menu.SetupNextMenu("newgame");
+}
+
+menu.verifyNightmare = function(ch)
+{
+	if(ch!="KeyY") return;
+	menuactive = false;
+	changeState("game", 1, gamemode == "commercial" ? 1 : menu.wantedEpisode, 4);
+	onTitle = false;
+	menu.message.toPrint = false;
+}
+
+menu.skillRoutine = function(sk)
+{
+	if(sk >= 4)
+	{
+		menu.message.startMessage(doom_txt["NIGHTMARE"], menu.verifyNightmare, true);
+		return;
+	}
+	menuactive = false;
+	changeState("game", 1, gamemode == "commercial" ? 1 : menu.wantedEpisode, sk);
+	onTitle = false;
 }
 
 menu["mainmenu"] = new Menu(
@@ -283,11 +302,11 @@ menu["newgame"] = new Menu(
 	5,
 	"episode",
 	[
-		new Menuitem(1, "M_JKILL",	"KeyI", null),
-		new Menuitem(1, "M_ROUGH",	"KeyH", null),
-		new Menuitem(1, "M_HURT",	"KeyH", null),
-		new Menuitem(1, "M_ULTRA",	"KeyU", null),
-		new Menuitem(1, "M_NMARE",	"KeyN", null),
+		new Menuitem(1, "M_JKILL",	"KeyI", menu.skillRoutine),
+		new Menuitem(1, "M_ROUGH",	"KeyH", menu.skillRoutine),
+		new Menuitem(1, "M_HURT",	"KeyH", menu.skillRoutine),
+		new Menuitem(1, "M_ULTRA",	"KeyU", menu.skillRoutine),
+		new Menuitem(1, "M_NMARE",	"KeyN", menu.skillRoutine),
 	],
 	function()
 	{
