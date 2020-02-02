@@ -23,16 +23,7 @@ class WAD
 			this.lumps[i].lumpData = this.data.slice(this.lumps[i].lumpOffset, this.lumps[i].lumpLength + this.lumps[i].lumpOffset);
 			this.lumps[i].lumpDataView = new DataView(this.lumps[i].lumpData);
 			
-			if(this.lumps[i].name == "PLAYPAL")
-			{
-				var l = Math.floor(this.lumps[i].lumpLength / 768);
-				for(var k = 0; k < l; k++)
-				{
-					playpal[k] = []
-					for(var j = 0; j < 256; j++) playpal[k][j] = [this.lumps[i].lumpDataView.getUint8((k*768)+(j*3)),this.lumps[i].lumpDataView.getUint8((k*768)+(j*3+1)),this.lumps[i].lumpDataView.getUint8((k*768)+(j*3+2))];
-				}
-				console.log("Loaded " + l + " palettes.");
-			}
+			if(this.lumps[i].name == "PLAYPAL") playpal.loadPalette(this.lumps[i]);
 		}
 	}
 	checkType()

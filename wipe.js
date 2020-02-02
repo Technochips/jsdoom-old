@@ -23,14 +23,14 @@ wipe.end = function()
 }
 wipe.wipe = function()
 {
-	var w = width/2;
+	var w = graphics.width/2;
 	if(!wipe.wiping)
 	{
 		wipe.wiping = true;
-		for(var x = 0; x < width; x++)
+		for(var x = 0; x < graphics.width; x++)
 		{
-			wipe.startScreen[x] = oldBuffer[x].slice();
-			wipe.endScreen[x] = screenBuffer[x].slice();
+			wipe.startScreen[x] = graphics.oldBuffer[x].slice();
+			wipe.endScreen[x] = graphics.screenBuffer[x].slice();
 		}
 		wipe.columns[0] = -(M_Random()%16);
 		for(var x = 1; x < w; x++)
@@ -48,31 +48,31 @@ wipe.wipe = function()
 		{
 			nothing = false;
 			wipe.columns[x]++;
-			for(var y = 0; y < height; y++)
+			for(var y = 0; y < graphics.height; y++)
 			{
 				for(var T = 0; T <= 1; T++)
 				{
-					screenBuffer[(x*2)+T][y] = wipe.startScreen[(x*2)+T][y];
+					graphics.screenBuffer[(x*2)+T][y] = wipe.startScreen[(x*2)+T][y];
 				}
 			}
 		}
 		else if(wipe.columns[x] >= 0)
 		{
-			if(wipe.columns[x] < height) nothing = false;
+			if(wipe.columns[x] < graphics.height) nothing = false;
 			var dy = (wipe.columns[x] < 16) ? wipe.columns[x]+1 : 8;
-			if(wipe.columns[x] + dy >= height) dy = height - wipe.columns[x];
+			if(wipe.columns[x] + dy >= graphics.height) dy = graphics.height - wipe.columns[x];
 			wipe.columns[x]+=dy;
-			for(var y = 0; y < height; y++)
+			for(var y = 0; y < graphics.height; y++)
 			{
 				for(var T = 0; T <= 1; T++)
 				{
 					if(y < wipe.columns[x])
 					{
-						screenBuffer[(x*2)+T][y] = wipe.endScreen[(x*2)+T][y];
+						graphics.screenBuffer[(x*2)+T][y] = wipe.endScreen[(x*2)+T][y];
 					}
 					else
 					{
-						screenBuffer[(x*2)+T][y] = wipe.startScreen[(x*2)+T][y-wipe.columns[x]];
+						graphics.screenBuffer[(x*2)+T][y] = wipe.startScreen[(x*2)+T][y-wipe.columns[x]];
 					}
 				}
 			}

@@ -64,7 +64,7 @@ class Patch
 				{
 					if(p.img[w][h] >= 0)
 					{
-						drawPixel(p.img[w][h],x+w-p.xOffset,y+h-p.yOffset)
+						graphics.drawPixel(p.img[w][h],x+w-p.xOffset,y+h-p.yOffset)
 					}
 				}
 			}
