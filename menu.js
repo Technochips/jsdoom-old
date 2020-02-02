@@ -10,6 +10,10 @@ var currentMenu = "mainmenu";
 
 class Menuitem
 {
+	status;
+	name;
+	routine;
+	alphaKey;
 	constructor(status, name, alphaKey, routine)
 	{
 		this.status = status;
@@ -20,6 +24,13 @@ class Menuitem
 }
 class Menu
 {
+	numitems;
+	prevMenu;
+	menuitems;
+	routine;
+	x;
+	y;
+	lastOn;
 	constructor(numitems, prevMenu, menuitems, routine, x, y, lastOn)
 	{
 		this.numitems = numitems;
@@ -104,21 +115,31 @@ menu.onKeyDown = function(e)
 		{
 			case "Escape":
 				menu.unpause();
+				sound.playSound("SWTCHX");
 				return true;
 			case "ArrowUp":
 				itemOn--;
 				if(itemOn < 0) itemOn = menu[currentMenu].numitems-1;
+				sound.playSound("PSTOP");
 				return true;
 			case "ArrowDown":
 				itemOn++;
 				if(itemOn >= menu[currentMenu].numitems) itemOn = 0;
+				sound.playSound("PSTOP");
 				return true;
 			case "Backspace":
-				if(menu[currentMenu].prevMenu) menu.SetupNextMenu(menu[currentMenu].prevMenu);
+				if(menu[currentMenu].prevMenu)
+				{
+					menu.SetupNextMenu(menu[currentMenu].prevMenu);
+					sound.playSound("SWTCHN");
+				}
 				return true;
 			case "Enter":
 				if(menu[currentMenu].menuitems[itemOn].routine)
+				{
 					menu[currentMenu].menuitems[itemOn].routine();
+				}
+				sound.playSound("PISTOL");
 				return true;
 		}
 	}
@@ -127,7 +148,7 @@ menu.onKeyDown = function(e)
 		if(e.keyCode == 27)
 		{
 			menu.pause();
-			//playsound
+			sound.playSound("SWTCHN");
 			return true;
 		}
 		if(title)

@@ -1,5 +1,11 @@
 class WAD
 {
+	data;
+	dataView;
+	type;
+	lumps;
+	lumpCount;
+	diroffset;
 	constructor(data)
 	{
 		this.data = data;

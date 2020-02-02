@@ -1,6 +1,13 @@
 var patches = [];
 class Patch
 {
+	lump;
+	width;
+	height;
+	xOffset;
+	yOffset;
+	img;
+	columns;
 	constructor(lump)
 	{
 		this.lump = lump;
