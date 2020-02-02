@@ -86,7 +86,7 @@ function run(dt)
 	{
 		wipe.wipe();
 	}
-	graphics.drawText("fps: " + dt_fps.toFixed(2) + "\nms: " + dt_ms.toFixed(2), 0, 186);
+	font.drawText("fps: " + dt_fps.toFixed(2) + "\nms: " + dt_ms.toFixed(2), 0, 186);
 	graphics.applyBuffer();
 	if(fast) setTimeout(run, 0, [dt_now]);
 }

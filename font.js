@@ -1,9 +1,45 @@
-var hu_font = [];
+var font = {};
 
-var HU_FONTSTART = 33;
-var HU_FONTEND = 95;
+font.hu_font = [];
 
-for(var x = HU_FONTSTART; x < HU_FONTEND; x++)
+font.HU_FONTSTART = 33;
+font.HU_FONTEND = 95;
+
+for(var x = font.HU_FONTSTART; x < font.HU_FONTEND; x++)
 {
-	hu_font[String.fromCharCode(x)] = "STCFN" + String(x).padStart(3, '0');
+	font.hu_font[String.fromCharCode(x)] = "STCFN" + String(x).padStart(3, '0');
+}
+
+font.drawText = function(text, x, y)
+{
+	var w = 0;
+	var h = 0;
+	for(var i = 0; i < text.length; i++)
+	{
+		var c = text.charAt(i);
+		if(c == "\n")
+		{
+			w = 0;
+			h+=7;
+		}
+		else if(this.hu_font[c.toUpperCase()])
+		{
+			var p = Patch.drawPatch(this.hu_font[c.toUpperCase()], x+w,y+h)
+			if(p)
+			{
+				if(w+p.width > graphics.width) break;
+				w+=p.width;
+			}
+			else if(!useBuffer)
+			{
+				if(w+8 > graphics.width) break;
+				graphics.ctx.fillText(c, x+w, y+h+10);
+				w += 8;
+			}
+		}
+		else
+		{
+			w += 4;
+		}
+	}
 }

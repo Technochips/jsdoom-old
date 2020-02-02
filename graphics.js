@@ -71,40 +71,6 @@ graphics.drawPixel = function(color, x, y)
 		}
 	}
 }
-
-graphics.drawText = function(text, x, y)
-{
-	var w = 0;
-	var h = 0;
-	for(var i = 0; i < text.length; i++)
-	{
-		var c = text.charAt(i);
-		if(c == "\n")
-		{
-			w = 0;
-			h+=7;
-		}
-		else if(hu_font[c.toUpperCase()])
-		{
-			var p = Patch.drawPatch(hu_font[c.toUpperCase()], x+w,y+h)
-			if(p)
-			{
-				if(w+p.width > this.width) break;
-				w+=p.width;
-			}
-			else if(!useBuffer)
-			{
-				if(w+8 > this.width) break;
-				this.ctx.fillText(c, x+w, y+h+10);
-				w += 8;
-			}
-		}
-		else
-		{
-			w += 4;
-		}
-	}
-}
 graphics.applyBuffer = function()
 {
 	if(this.useBuffer)
