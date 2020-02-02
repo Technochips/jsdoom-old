@@ -116,45 +116,56 @@ menu.onKeyDown = function(e)
 			case "Escape":
 				menu.unpause();
 				sound.playSound("SWTCHX");
-				return true;
+				break;
 			case "ArrowUp":
 				itemOn--;
 				if(itemOn < 0) itemOn = menu[currentMenu].numitems-1;
 				sound.playSound("PSTOP");
-				return true;
+				break;
 			case "ArrowDown":
 				itemOn++;
 				if(itemOn >= menu[currentMenu].numitems) itemOn = 0;
 				sound.playSound("PSTOP");
-				return true;
+				break;
 			case "Backspace":
 				if(menu[currentMenu].prevMenu)
 				{
 					menu.SetupNextMenu(menu[currentMenu].prevMenu);
 					sound.playSound("SWTCHN");
 				}
-				return true;
+				break;
 			case "Enter":
 				if(menu[currentMenu].menuitems[itemOn].routine)
-				{
 					menu[currentMenu].menuitems[itemOn].routine();
-				}
 				sound.playSound("PISTOL");
-				return true;
+				break;
+			default:
+				var x = itemOn;
+				for(var i = 0; i < menu[currentMenu].numitems; i++)
+				{
+					x++;
+					if(x >= menu[currentMenu].numitems) x = 0;
+					if(menu[currentMenu].menuitems[x].alphaKey == e.code)
+					{
+						itemOn = x;
+						sound.playSound("PSTOP");
+						break;
+					}
+				}
+				break;
 		}
 	}
 	else
 	{
-		if(e.keyCode == 27)
+		switch(e.code)
 		{
-			menu.pause();
-			sound.playSound("SWTCHN");
-			return true;
-		}
-		if(title)
-		{
-			menu.pause();
-			return true;
+			case "Escape":
+				menu.pause();
+				sound.playSound("SWTCHN");
+				break;
+			default:
+				menu.pause();
+				break;
 		}
 	}
 }
@@ -163,18 +174,18 @@ menu["mainmenu"] = new Menu(
 	6,
 	null,
 	[
-		new Menuitem(1, "M_NGAME", "n", function()
+		new Menuitem(1, "M_NGAME", "KeyN", function()
 		{
 			if(gamemode == "commercial")
 				menu.SetupNextMenu("newgame");
 			else
 				menu.SetupNextMenu("episode");
 		}),
-		new Menuitem(1, "M_OPTION", "o", null),
-		new Menuitem(1, "M_LOADG", "l", null),
-		new Menuitem(1, "M_SAVEG", "s", null),
-		new Menuitem(1, "M_RDTHIS", "r", null),
-		new Menuitem(1, "M_QUITG", "q", null),
+		new Menuitem(1, "M_OPTION", "KeyO", null),
+		new Menuitem(1, "M_LOADG", "KeyL", null),
+		new Menuitem(1, "M_SAVEG", "KeyS", null),
+		new Menuitem(1, "M_RDTHIS", "KeyR", null),
+		new Menuitem(1, "M_QUITG", "KeyQ", null),
 	],
 	function()
 	{
@@ -188,19 +199,19 @@ menu["episode"] = new Menu(
 	4,
 	"mainmenu",
 	[
-		new Menuitem(1, "M_EPI1", "k", function()
+		new Menuitem(1, "M_EPI1", "KeyK", function()
 		{
 			menu.SetupNextMenu("newgame");
 		}),
-		new Menuitem(1, "M_EPI2", "t", function()
+		new Menuitem(1, "M_EPI2", "KeyT", function()
 		{
 			menu.SetupNextMenu("newgame");
 		}),
-		new Menuitem(1, "M_EPI3", "i", function()
+		new Menuitem(1, "M_EPI3", "KeyI", function()
 		{
 			menu.SetupNextMenu("newgame");
 		}),
-		new Menuitem(1, "M_EPI4", "t", function()
+		new Menuitem(1, "M_EPI4", "KeyT", function()
 		{
 			menu.SetupNextMenu("newgame");
 		}),
@@ -217,11 +228,11 @@ menu["newgame"] = new Menu(
 	5,
 	"episode",
 	[
-		new Menuitem(1, "M_JKILL",	"i", null),
-		new Menuitem(1, "M_ROUGH",	"i", null),
-		new Menuitem(1, "M_HURT",	"i", null),
-		new Menuitem(1, "M_ULTRA",	"i", null),
-		new Menuitem(1, "M_NMARE",	"i", null),
+		new Menuitem(1, "M_JKILL",	"KeyI", null),
+		new Menuitem(1, "M_ROUGH",	"KeyH", null),
+		new Menuitem(1, "M_HURT",	"KeyH", null),
+		new Menuitem(1, "M_ULTRA",	"KeyU", null),
+		new Menuitem(1, "M_NMARE",	"KeyN", null),
 	],
 	function()
 	{
