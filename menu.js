@@ -1,12 +1,19 @@
 var menu = {}
-var paused = false;
+var menuactive = false;
 
-var itemOn = 0;
-var whichSkull = 0;
-var skullAnimCounter = 10;
-var skullName = ["M_SKULL1","M_SKULL2"];
+menu.itemOn = 0;
+menu.whichSkull = 0;
+menu.skullAnimCounter = 10;
+menu.skullName = ["M_SKULL1","M_SKULL2"];
 
-var currentMenu = "mainmenu";
+menu.message = {};
+menu.message.toPrint = false;
+menu.message.lastMenuActive;
+menu.message.string;
+menu.message.routine;
+menu.message.needsInput;
+
+menu.currentMenu = "mainmenu";
 
 class Menuitem
 {
@@ -45,12 +52,13 @@ class Menu
 
 menu.pause = function()
 {
-	menu.SetupNextMenu("mainmenu", false)
-	paused = true;
+	this.SetupNextMenu("mainmenu", false)
+	menuactive = true;
 }
 menu.unpause = function()
 {
-	paused = false;
+	menuactive = false;
+	this.message.toPrint = false;
 }
 
 menu.init = function()
@@ -72,82 +80,104 @@ menu.init = function()
 
 menu.draw = function()
 {
-	if(paused)
+	if(this.message.toPrint)
 	{
-		var c = menu[currentMenu];
-		if(c)
+		var start = 0;
+		var y = Math.floor(100 - font.stringHeight(this.message.string)/2);
+		var string = this.message.string.split("\n");
+		for(var i in string)
 		{
-			if(c.routine)
-			{
-				c.routine();
-			}
-
-			var x = c.x;
-			var y = c.y;
-			for(var i = 0; i < c.numitems; i++)
-			{
-				if(c.menuitems[i].name)
-				{
-					Patch.drawPatch(c.menuitems[i].name, x, y);
-				}
-				y += 16;
-			}
-			Patch.drawPatch(skullName[whichSkull], x-32, c.y - 5 + itemOn*16);
+			var x = Math.ceil(160 - font.stringWidth(string[i])/2);
+			font.drawText(string[i], x, y);
+			y += Patch.getPatch(font.hu_font["!"]).height;
 		}
+		return;
+	}
+
+	if(!menuactive)
+	{
+		return;
+	}
+
+	var c = menu[this.currentMenu];
+	if(c)
+	{
+		if(c.routine)
+		{
+			c.routine();
+		}
+		var x = c.x;
+		var y = c.y;
+		for(var i = 0; i < c.numitems; i++)
+		{
+			if(c.menuitems[i].name)
+			{
+				Patch.drawPatch(c.menuitems[i].name, x, y);
+			}
+			y += 16;
+		}
+		Patch.drawPatch(this.skullName[this.whichSkull], x-32, c.y - 5 + this.itemOn*16);
 	}
 }
 menu.update = function()
 {
-	skullAnimCounter--;
-	if(skullAnimCounter <= 0)
+	this.skullAnimCounter--;
+	if(this.skullAnimCounter <= 0)
 	{
-		whichSkull ^= 1;
-		skullAnimCounter = 8;
+		this.whichSkull ^= 1;
+		this.skullAnimCounter = 8;
 	}
 }
 
 menu.onKeyDown = function(e)
 {
 	if(wipe.wiping) return;
-	if(paused)
+	if(menuactive)
 	{
+		if(e.code == "Escape")
+		{
+			menu.unpause();
+			sound.playSound("SWTCHX");
+			return;
+		}
+		if(menu.message.toPrint)
+		{
+			if(menu.message.routine) menu.message.routine(e.code);
+			return;
+		}
 		switch(e.code)
 		{
-			case "Escape":
-				menu.unpause();
-				sound.playSound("SWTCHX");
-				break;
 			case "ArrowUp":
-				itemOn--;
-				if(itemOn < 0) itemOn = menu[currentMenu].numitems-1;
+				this.itemOn--;
+				if(this.itemOn < 0) this.itemOn = menu[this.currentMenu].numitems-1;
 				sound.playSound("PSTOP");
 				break;
 			case "ArrowDown":
-				itemOn++;
-				if(itemOn >= menu[currentMenu].numitems) itemOn = 0;
+				this.itemOn++;
+				if(this.itemOn >= menu[this.currentMenu].numitems) this.itemOn = 0;
 				sound.playSound("PSTOP");
 				break;
 			case "Backspace":
-				if(menu[currentMenu].prevMenu)
+				if(menu[this.currentMenu].prevMenu)
 				{
-					menu.SetupNextMenu(menu[currentMenu].prevMenu);
+					menu.SetupNextMenu(menu[this.currentMenu].prevMenu);
 					sound.playSound("SWTCHN");
 				}
 				break;
 			case "Enter":
-				if(menu[currentMenu].menuitems[itemOn].routine)
-					menu[currentMenu].menuitems[itemOn].routine();
+				if(menu[this.currentMenu].menuitems[this.itemOn].routine)
+					menu[this.currentMenu].menuitems[this.itemOn].routine();
 				sound.playSound("PISTOL");
 				break;
 			default:
-				var x = itemOn;
-				for(var i = 0; i < menu[currentMenu].numitems; i++)
+				var x = this.itemOn;
+				for(var i = 0; i < menu[this.currentMenu].numitems; i++)
 				{
 					x++;
-					if(x >= menu[currentMenu].numitems) x = 0;
-					if(menu[currentMenu].menuitems[x].alphaKey == e.code)
+					if(x >= menu[this.currentMenu].numitems) x = 0;
+					if(menu[this.currentMenu].menuitems[x].alphaKey == e.code)
 					{
-						itemOn = x;
+						this.itemOn = x;
 						sound.playSound("PSTOP");
 						break;
 					}
@@ -174,7 +204,7 @@ menu["mainmenu"] = new Menu(
 	6,
 	null,
 	[
-		new Menuitem(1, "M_NGAME", "KeyN", function()
+		new Menuitem(1, "M_NGAME", "KeyN", ()=>
 		{
 			if(gamemode == "commercial")
 				menu.SetupNextMenu("newgame");
@@ -185,7 +215,20 @@ menu["mainmenu"] = new Menu(
 		new Menuitem(1, "M_LOADG", "KeyL", null),
 		new Menuitem(1, "M_SAVEG", "KeyS", null),
 		new Menuitem(1, "M_RDTHIS", "KeyR", null),
-		new Menuitem(1, "M_QUITG", "KeyQ", null),
+		new Menuitem(1, "M_QUITG", "KeyQ", ()=>
+		{
+			var endstring;
+			var msg = gamemode == "commercial" ? doom2_endmsg : doom1_endmsg;
+			if(doom_txt.language != "english")
+				endstring = endmsg[0] + "\n\n" + doom_txt["DOSY"];
+			else
+				endstring = msg[gametic%msg.length] + "\n\n" + doom_txt["DOSY"];
+			menu.message.startMessage(endstring, (ch)=>
+			{
+				if(ch != "KeyY") return;
+				quit();
+			}, true);
+		}),
 	],
 	function()
 	{
@@ -247,8 +290,23 @@ menu.SetupNextMenu = function(m, playSound)
 {
 	if(menu[m])
 	{
-		menu[currentMenu].lastOn = itemOn;
-		currentMenu = m;
-		itemOn = menu[currentMenu].lastOn;
+		menu[this.currentMenu].lastOn = this.itemOn;
+		this.currentMenu = m;
+		this.itemOn = menu[this.currentMenu].lastOn;
+		menu.message.toPrint = false;
 	}
+}
+
+menu.message.startMessage = function(string, routine, input)
+{
+	this.lastMenuActive = menuactive
+	this.toPrint = true;
+	this.string = string;
+	this.routine = routine;
+	this.needsInput = input;
+}
+menu.message.stopMessage = function(string, routine, input)
+{
+	menuactive = this.lastMenuActive;
+	this.toPrint = false;
 }

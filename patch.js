@@ -60,9 +60,13 @@ class Patch
 		}
 		return patches[lump];
 	}
+	static getPatch(patch)
+	{
+		return Patch.precachePatch(patch);
+	}
 	static drawPatch(patch, x, y)
 	{
-		var p = Patch.precachePatch(patch);
+		var p = Patch.getPatch(patch);
 		if(p)
 		{
 			for(var w = 0; w < p.width; w++)

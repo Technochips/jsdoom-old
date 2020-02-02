@@ -5,11 +5,12 @@ var shownElements = ["wad-selection", "loading", "game"];
 var fps = 35;
 var ms = 1000/fps;
 
-var frame = 0;
+var gametic = 0;
 var dt_fps = 0;
 var dt_ms = 0;
 
 var fast = false;
+var showFps = true;
 
 var gamemode = "indetermined";
 
@@ -86,13 +87,13 @@ function run(dt)
 	{
 		wipe.wipe();
 	}
-	font.drawText("fps: " + dt_fps.toFixed(2) + "\nms: " + dt_ms.toFixed(2), 0, 186);
+	if(showFps) font.drawText("fps: " + dt_fps.toFixed(2) + "\nms: " + dt_ms.toFixed(2), 0, 186);
 	graphics.applyBuffer();
 	if(fast) setTimeout(run, 0, [dt_now]);
 }
 function update()
 {
-	frame++;
+	gametic++;
 	graphics.update();
 	gamestates[gamestate].update();
 	menu.update();
@@ -106,6 +107,11 @@ function onKeyDown(e)
 {
 	menu.onKeyDown(e);
 	e.preventDefault();		
+}
+
+function quit()
+{
+	document.location.reload();
 }
 
 setShown("wad-selection");
