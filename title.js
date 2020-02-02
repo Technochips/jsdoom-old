@@ -26,5 +26,5 @@ gamestates["title"].update = function()
 }
 gamestates["title"].draw = function()
 {
-	if(this.cycles[this.cycle]) drawPatch(this.cycles[this.cycle],0,0);
+	if(this.cycles[this.cycle]) Patch.drawPatch(this.cycles[this.cycle],0,0);
 }

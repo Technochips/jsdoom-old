@@ -1,3 +1,4 @@
+var patches = [];
 class Patch
 {
 	constructor(lump)
@@ -41,5 +42,33 @@ class Patch
 			}
 			if(topdelta >= 0xFF) continue;
 		}
+	}
+
+	static precachePatch(lump)
+	{
+		if(!patches[lump] && wad)
+		{
+			var l = wad.getFirstLump(lump);
+			if(l) patches[lump] = new Patch(l);
+		}
+		return patches[lump];
+	}
+	static drawPatch(patch, x, y)
+	{
+		var p = Patch.precachePatch(patch);
+		if(p)
+		{
+			for(var w = 0; w < p.width; w++)
+			{
+				for(var h = 0; h < p.height; h++)
+				{
+					if(p.img[w][h] >= 0)
+					{
+						drawPixel(p.img[w][h],x+w-p.xOffset,y+h-p.yOffset)
+					}
+				}
+			}
+		}
+		return p;
 	}
 }

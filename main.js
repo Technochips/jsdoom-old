@@ -24,7 +24,6 @@ var playpal = [[]];
 for(var i = 0; i < 256; i++) playpal[0][i] = [i, i, i];
 var playpalCurrent = 0;
 var playpalOld = 1;
-var patches = [];
 var frame = 0;
 var dt_fps = 0;
 var dt_ms = 0;
@@ -101,6 +100,8 @@ function init()
 {
 	setTimeout(run, 0, performance.now());
 	console.log("Started loop");
+
+	window.addEventListener("keydown", onKeyDown, true);
 	
 	menu.init();
 }
@@ -116,16 +117,6 @@ function setShown(e, loadMsg)
 		else
 			document.getElementById(shownElements[s]).classList.add('hidden');
 	}
-}
-
-function precachePatch(lump)
-{
-	if(!patches[lump] && wad)
-	{
-		var l = wad.getFirstLump(lump);
-		if(l) patches[lump] = new Patch(l);
-	}
-	return patches[lump];
 }
 
 function drawPixel(color, x, y)
@@ -158,7 +149,7 @@ function drawText(text, x, y)
 		}
 		else if(hu_font[c.toUpperCase()])
 		{
-			var p = drawPatch(hu_font[c.toUpperCase()], x+w,y+h)
+			var p = Patch.drawPatch(hu_font[c.toUpperCase()], x+w,y+h)
 			if(p)
 			{
 				if(w+p.width > width) break;
@@ -178,24 +169,6 @@ function drawText(text, x, y)
 	}
 }
 
-function drawPatch(patch, x, y)
-{
-	var p = precachePatch(patch);
-	if(p)
-	{
-		for(var w = 0; w < p.width; w++)
-		{
-			for(var h = 0; h < p.height; h++)
-			{
-				if(p.img[w][h] >= 0)
-				{
-					drawPixel(p.img[w][h],x+w-p.xOffset,y+h-p.yOffset)
-				}
-			}
-		}
-	}
-	return p;
-}
 function run(dt)
 {
 	var dt_now = performance.now();
@@ -234,6 +207,11 @@ function draw()
 {
 	gamestates[gamestate].draw();
 	menu.draw();
+}
+function onKeyDown(e)
+{
+	if(menu.onKeyDown(e))
+		e.preventDefault();
 }
 function applyBuffer()
 {

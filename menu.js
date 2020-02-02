@@ -34,7 +34,7 @@ class Menu
 
 menu.pause = function()
 {
-	menu.SetupNextMenu("mainmenu")
+	menu.SetupNextMenu("mainmenu", false)
 	paused = true;
 }
 menu.unpause = function()
@@ -44,7 +44,6 @@ menu.unpause = function()
 
 menu.init = function()
 {
-	window.addEventListener("keydown", menu.onKeyDown, true);
 	switch(gamemode)
 	{
 		case "commercial":
@@ -78,11 +77,11 @@ menu.draw = function()
 			{
 				if(c.menuitems[i].name)
 				{
-					drawPatch(c.menuitems[i].name, x, y);
+					Patch.drawPatch(c.menuitems[i].name, x, y);
 				}
 				y += 16;
 			}
-			drawPatch(skullName[whichSkull], x-32, c.y - 5 + itemOn*16);
+			Patch.drawPatch(skullName[whichSkull], x-32, c.y - 5 + itemOn*16);
 		}
 	}
 }
@@ -101,27 +100,26 @@ menu.onKeyDown = function(e)
 	if(wipe.wiping) return;
 	if(paused)
 	{
-		switch(e.keyCode)
+		switch(e.code)
 		{
-			case 27:
+			case "Escape":
 				menu.unpause();
-				break;
-			case 38:
+				return true;
+			case "ArrowUp":
 				itemOn--;
 				if(itemOn < 0) itemOn = menu[currentMenu].numitems-1;
-				break;
-			case 40:
+				return true;
+			case "ArrowDown":
 				itemOn++;
 				if(itemOn >= menu[currentMenu].numitems) itemOn = 0;
-				break;
-			case 8:
-				if(menu[currentMenu].prevMenu)
-					currentMenu = prevMenu;
-				break;
-			case 13:
+				return true;
+			case "Backspace":
+				if(menu[currentMenu].prevMenu) menu.SetupNextMenu(menu[currentMenu].prevMenu);
+				return true;
+			case "Enter":
 				if(menu[currentMenu].menuitems[itemOn].routine)
 					menu[currentMenu].menuitems[itemOn].routine();
-				break;
+				return true;
 		}
 	}
 	else
@@ -130,10 +128,12 @@ menu.onKeyDown = function(e)
 		{
 			menu.pause();
 			//playsound
+			return true;
 		}
 		if(title)
 		{
 			menu.pause();
+			return true;
 		}
 	}
 }
@@ -157,7 +157,7 @@ menu["mainmenu"] = new Menu(
 	],
 	function()
 	{
-		drawPatch("M_DOOM", 92, 2);
+		Patch.drawPatch("M_DOOM", 94, 2);
 	},
 	97, 64,
 	0
@@ -186,7 +186,7 @@ menu["episode"] = new Menu(
 	],
 	function()
 	{
-		drawPatch("M_EPISOD", 54, 38);
+		Patch.drawPatch("M_EPISOD", 54, 38);
 	},
 	48, 63,
 	0
@@ -204,14 +204,14 @@ menu["newgame"] = new Menu(
 	],
 	function()
 	{
-		drawPatch("M_NEWG", 96, 14);
-		drawPatch("M_SKILL", 54, 38);
+		Patch.drawPatch("M_NEWG", 96, 14);
+		Patch.drawPatch("M_SKILL", 54, 38);
 	},
 	48, 63,
 	2
 );
 
-menu.SetupNextMenu = function(m)
+menu.SetupNextMenu = function(m, playSound)
 {
 	if(menu[m])
 	{
