@@ -12,6 +12,8 @@ var dt_ms = 0;
 var fast = false;
 var showFps = true;
 
+var onTitle = true;
+
 var gamemode = "indetermined";
 
 function loadFile()
@@ -55,6 +57,7 @@ function init()
 	console.log("Started loop");
 
 	window.addEventListener("keydown", onKeyDown, true);
+	window.addEventListener("keyup", onKeyUp, true);
 	
 	menu.init();
 }
@@ -77,7 +80,6 @@ function run(dt)
 	var dt_now = performance.now();
 	dt_ms = dt_now - dt;
 	dt_fps = 1/(dt_ms/1000);
-	if(!fast) setTimeout(run, ms, [dt_now]);
 	if(!wipe.gonnaWipe)
 	{
 		update();
@@ -89,12 +91,14 @@ function run(dt)
 	}
 	if(showFps) font.drawText("fps: " + dt_fps.toFixed(2) + "\nms: " + dt_ms.toFixed(2), 0, 186);
 	graphics.applyBuffer();
-	if(fast) setTimeout(run, 0, [dt_now]);
+	var dt_later = performance.now();
+	setTimeout(run, fast ? 0 : ms - (dt_later-dt_now), [dt_now]);
 }
 function update()
 {
 	gametic++;
 	graphics.update();
+	demo.update();
 	gamestates[gamestate].update();
 	menu.update();
 }
@@ -106,7 +110,13 @@ function draw()
 function onKeyDown(e)
 {
 	menu.onKeyDown(e);
-	e.preventDefault();		
+	input.onKeyDown(e);
+	e.preventDefault();
+}
+function onKeyUp(e)
+{
+	input.onKeyUp(e);
+	e.preventDefault();
 }
 
 function quit()

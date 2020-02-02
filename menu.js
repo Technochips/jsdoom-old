@@ -194,8 +194,11 @@ menu.onKeyDown = function(e)
 				sound.playSound("SWTCHN");
 				break;
 			default:
-				menu.pause();
-				break;
+				if(onTitle)
+				{
+					menu.pause();
+					break;
+				}
 		}
 	}
 }
