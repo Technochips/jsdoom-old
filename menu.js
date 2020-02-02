@@ -134,7 +134,7 @@ menu.onKeyDown = function(e)
 	if(wipe.wiping) return;
 	if(menuactive)
 	{
-		if(e.code == "Escape")
+		if((e.code == "Escape" && !menu.message.toPrint) || (e.code == "Escape" && menu.message.toPrint && menu.message.needsInput) || (menu.message.toPrint && !menu.message.needsInput))
 		{
 			menu.unpause();
 			sound.playSound("SWTCHX");
@@ -166,7 +166,7 @@ menu.onKeyDown = function(e)
 				break;
 			case "Enter":
 				if(menu[this.currentMenu].menuitems[this.itemOn].routine)
-					menu[this.currentMenu].menuitems[this.itemOn].routine();
+					menu[this.currentMenu].menuitems[this.itemOn].routine(this.itemOn);
 				sound.playSound("PISTOL");
 				break;
 			default:
@@ -198,6 +198,27 @@ menu.onKeyDown = function(e)
 				break;
 		}
 	}
+}
+
+menu.SetupNextMenu = function(m, playSound)
+{
+	if(menu[m])
+	{
+		menu[this.currentMenu].lastOn = this.itemOn;
+		this.currentMenu = m;
+		this.itemOn = menu[this.currentMenu].lastOn;
+		menu.message.toPrint = false;
+	}
+}
+
+menu.episodeRoutine = function(ep)
+{
+	if(gamemode == "shareware" && ep > 0)
+	{
+		menu.message.startMessage(doom_txt["SWSTRING"], null, false);
+		return;
+	}
+	menu.SetupNextMenu("newgame");
 }
 
 menu["mainmenu"] = new Menu(
@@ -242,22 +263,10 @@ menu["episode"] = new Menu(
 	4,
 	"mainmenu",
 	[
-		new Menuitem(1, "M_EPI1", "KeyK", function()
-		{
-			menu.SetupNextMenu("newgame");
-		}),
-		new Menuitem(1, "M_EPI2", "KeyT", function()
-		{
-			menu.SetupNextMenu("newgame");
-		}),
-		new Menuitem(1, "M_EPI3", "KeyI", function()
-		{
-			menu.SetupNextMenu("newgame");
-		}),
-		new Menuitem(1, "M_EPI4", "KeyT", function()
-		{
-			menu.SetupNextMenu("newgame");
-		}),
+		new Menuitem(1, "M_EPI1", "KeyK", menu.episodeRoutine),
+		new Menuitem(1, "M_EPI2", "KeyT", menu.episodeRoutine),
+		new Menuitem(1, "M_EPI3", "KeyI", menu.episodeRoutine),
+		new Menuitem(1, "M_EPI4", "KeyT", menu.episodeRoutine),
 	],
 	function()
 	{
@@ -285,17 +294,6 @@ menu["newgame"] = new Menu(
 	48, 63,
 	2
 );
-
-menu.SetupNextMenu = function(m, playSound)
-{
-	if(menu[m])
-	{
-		menu[this.currentMenu].lastOn = this.itemOn;
-		this.currentMenu = m;
-		this.itemOn = menu[this.currentMenu].lastOn;
-		menu.message.toPrint = false;
-	}
-}
 
 menu.message.startMessage = function(string, routine, input)
 {
