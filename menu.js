@@ -15,6 +15,30 @@ menu.message.needsInput;
 
 menu.currentMenu = "mainmenu";
 
+menu.quitsounds =
+[
+    "PLDETH",
+    "DMPAIN",
+    "POPAIN",
+    "SLOP",
+    "TELEPT",
+    "POSIT1",
+    "POSIT3",
+    "SGTATK"
+];
+
+menu.quitsounds2 =
+[
+    "VILACT",
+    "GETPOW",
+    "BOSCUB",
+    "SLOP",
+    "SKESWG",
+    "KNTDTH",
+    "BSPACT",
+    "SGTATK"
+];
+
 class Menuitem
 {
 	status;
@@ -267,7 +291,10 @@ menu["mainmenu"] = new Menu(
 			menu.message.startMessage(endstring, (ch)=>
 			{
 				if(ch != "KeyY") return;
-				quit();
+				quitting = true;
+				
+				var gt = parseInt(shiftString(gametic.toString(2).padStart(32, "0"), 2).substring(29), 2);
+				sound.playSound(gamemode == "commercial" ? menu.quitsounds2[gt] : menu.quitsounds[gt]).onended = quit;
 			}, true);
 		}),
 	],

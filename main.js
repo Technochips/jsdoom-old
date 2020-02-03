@@ -12,6 +12,8 @@ var dt_ms = 0;
 var fast = false;
 var showFps = true;
 
+var quitting = false;
+
 var gamemode = "indetermined";
 
 function loadFile()
@@ -78,7 +80,7 @@ function run(dt)
 	var dt_now = performance.now();
 	dt_ms = dt_now - dt;
 	dt_fps = 1/(dt_ms/1000);
-	if(!wipe.gonnaWipe)
+	if(!wipe.gonnaWipe && !quitting)
 	{
 		update();
 		draw();

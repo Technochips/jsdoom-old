@@ -42,4 +42,5 @@ sound.playSound = function(filename)
 	node.buffer = sound.sounds[file].audioBuffer;
 	node.connect(sound.audioContext.destination);
 	node.start();
+	return node;
 }
