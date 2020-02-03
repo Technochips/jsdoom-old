@@ -24,7 +24,7 @@ var input = {};
 input.inputs = [];
 input.firstInputs = [];
 
-input.ticinput = new TicInput(0, 0, 0, false, false, false, false);
+input.ticinput = [];
 
 input.removeFirstInputs = function()
 {

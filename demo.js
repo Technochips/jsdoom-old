@@ -15,10 +15,8 @@ class Demo
 	fast;
 	nomonsters;
 	player;
-	p1;
-	p2;
-	p3;
-	p4;
+	p = [];
+	players;
 
 	frames = [];
 	constructor(lump)
@@ -32,15 +30,23 @@ class Demo
 		this.fast = lump.lumpDataView.getUint8(6) > 0;
 		this.nomonsters = lump.lumpDataView.getUint8(7) > 0;
 		this.player = lump.lumpDataView.getUint8(8);
-		this.p1 = lump.lumpDataView.getUint8(9) > 0;
-		this.p2 = lump.lumpDataView.getUint8(10) > 0;
-		this.p3 = lump.lumpDataView.getUint8(11) > 0;
-		this.p4 = lump.lumpDataView.getUint8(12) > 0;
+		this.p[0] = lump.lumpDataView.getUint8(9) > 0;
+		this.p[1] = lump.lumpDataView.getUint8(10) > 0;
+		this.p[2] = lump.lumpDataView.getUint8(11) > 0;
+		this.p[3] = lump.lumpDataView.getUint8(12) > 0;
+		this.players = this.p[0]+this.p[1]+this.p[2]+this.p[3];
 
 		var f = 0;
-		for(var i = 13; i < lump.lumpLength-3; i++)
+		for(var i = 13; i < lump.lumpLength-3; i+=(4*this.players))
 		{
-			this.frames[f] = new TicInput(lump.lumpDataView.getInt8(i), lump.lumpDataView.getInt8(i+1), lump.lumpDataView.getInt8(i+2));
+			this.frames[f] = [];
+			for(var P = 0; P < 4; P++)
+			{
+				if(this.p[P])
+				{
+					this.frames[f][P] = new TicInput(lump.lumpDataView.getInt8(i+P), lump.lumpDataView.getInt8(i+P+1), lump.lumpDataView.getInt8(i+P+2));
+				}
+			}
 			f++;
 		}
 	}
