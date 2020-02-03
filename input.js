@@ -24,9 +24,34 @@ class TicInput
 }
 
 var input = {};
-input.inputs = [];
-input.firstInputs = [];
+input.gameKeys = [];
 
+input.keysPressed = [];
+input.keysDown = [];
+input.gameKeysPressed = [];
+input.gameKeysDown = [];
+
+input.autorun = false;
+
+input.gameKeyReset = function()
+{
+	input.gameKeys = 
+	{
+		forward: "KeyW",
+		backward: "KeyS",
+		left: "ArrowLeft",
+		right: "ArrowRight",
+		strafeleft: "KeyA",
+		straferight: "KeyD",
+		run: "ShiftLeft",
+		strafe: "AltLeft",
+		fire: "ControlLeft",
+		use: "Space"
+	}
+}
+input.gameKeyReset();
+
+input.ticinput = [];
 input.resetTicinput = function()
 {
 	input.ticinput =
@@ -39,31 +64,84 @@ input.resetTicinput = function()
 }
 input.resetTicinput();
 
-input.removeFirstInputs = function()
+input.setTicinputFromGameInput = function(player)
 {
-	for(var i in input.firstInputs)
+	var running = this.gameKeysPressed.run || input.autorun;
+
+	if(this.gameKeysPressed.forward && !this.gameKeysPressed.backward)
+		input.ticinput[player].vertical = running ? 50 : 24;
+	else if(!this.gameKeysPressed.forward && this.gameKeysPressed.backward)
+		input.ticinput[player].vertical = running ? -50 : -24;
+	else
+		input.ticinput[player].vertical = 0;
+	
+	if(this.gameKeysPressed.straferight && !this.gameKeysPressed.strafeleft)
+		input.ticinput[player].strafing = running ? 40 : 24;
+	else if(!this.gameKeysPressed.straferight && this.gameKeysPressed.strafeleft)
+		input.ticinput[player].strafing = running ? -40 : -24;
+	else
+		input.ticinput[player].strafing = 0;
+	
+	input.ticinput[player].fire = this.gameKeysPressed.fire;
+	input.ticinput[player].use = this.gameKeysPressed.use;
+	input.ticinput[player].pause = this.keysPressed["Pause"];
+
+	input.ticinput[player].weapon = 0;
+	for(var i = 1; i <= 7; i++)
 	{
-		input.firstInputs[i] = false;
+		if(this.keysDown["Digit" + i])
+		{
+			input.ticinput[player].weapon = i;
+			break;
+		}
+	}
+}
+
+input.removeKeysDown = function()
+{
+	for(var i in input.keysDown)
+	{
+		input.keysDown[i] = false;
+	}
+	for(var i in input.gameKeysDown)
+	{
+		input.gameKeysDown[i] = false;
 	}
 }
 input.hasKeyPressed = function()
 {
-	for(var i in input.firstInputs) if(input.firstInputs[i]) return input.firstInputs[i];
+	for(var i in input.keysDown) if(input.keysDown[i]) return input.keysDown[i];
+	return false;
 }
-input.firstKeyPressed = function()
+input.firstKeyDown = function()
 {
-	for(var i in input.firstInputs) if(input.firstInputs[i]) return i;
+	for(var i in input.keysDown) if(input.keysDown[i]) return i;
 }
 
 input.onKeyDown = function(e)
 {
-	if(!input.inputs[e.code])
+	if(!input.keysPressed[e.code])
 	{
-		input.inputs[e.code] = true;
-		input.firstInputs[e.code] = true;
+		input.keysPressed[e.code] = true;
+		input.keysDown[e.code] = true;
+		for(var k in input.gameKeys)
+		{
+			if(input.gameKeys[k] == e.code)
+			{
+				input.gameKeysPressed[k] = true;
+				input.gameKeysDown[k] = true;
+			}
+		}
 	}
 }
 input.onKeyUp = function(e)
 {
-	input.inputs[e.code] = false;
+	input.keysPressed[e.code] = false;
+	for(var k in input.gameKeys)
+	{
+		if(input.gameKeys[k] == e.code)
+		{
+			input.gameKeysPressed[k] = false;
+		}
+	}
 }

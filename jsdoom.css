@@ -1,4 +1,14 @@
+*
+{
+	font-family: sans-serif;
+}
+
 .hidden
 {
 	display:none;
+}
+
+.settings
+{
+	border: 1px solid black;
 }

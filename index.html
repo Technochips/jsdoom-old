@@ -4,23 +4,10 @@
 		<title>JSDoom</title>
 		<link rel="stylesheet" type="text/css" href="jsdoom.css">
 	</head>
-	<body>
+	<body onload="setShown('wad-selection')">
 		<h1>DOOM!</h1>
-		<div id="wad-selection" class="hidden">
-			<h2>Select your WADs</h2>
-			<label>IWAD</label>
-			<input type="file" name="iwad" accept=".wad"/>
-			<br/>
-			<label>PWAD(s)</label>
-			<input type="file" name="pwad" accept=".wad" multiple/>
-			<br/>
-			<button type="button" onclick="setTimeout(loadFile(),0)">Play!</button>
-		</div>
 		<div id="loading">
 			<p id="loading-p">Loading code... If this takes too long, make sure that Javascript isn't disabled. I thought this was common sense.</p>
-		</div>
-		<div id="game" class="hidden">
-			<canvas id="jsdoom-canvas" width="320" height="200">Uh oh, your browser has Javascript disabled, or is too old. Fix that in order to play.</canvas>
 		</div>
 		
 		<script type="text/javascript" src="util.js"></script>
@@ -40,5 +27,71 @@
 		<script type="text/javascript" src="demo.js"></script>
 		<script type="text/javascript" src="main.js"></script>
 		<script type="text/javascript" src="menu.js"></script>
+		<script type="text/javascript" src="htmlsetup.js"></script>
+		<div id="wad-selection" class="hidden">
+			<h2>Select your WADs</h2>
+			<label>IWAD</label>
+			<input type="file" name="iwad" accept=".wad"/>
+			<br/>
+			<label>PWAD(s)</label>
+			<input type="file" name="pwad" accept=".wad" multiple/>
+			<br/>
+			<button type="button" onclick="setTimeout(loadFile(),0)">Play!</button>
+			<hr/>
+			<div id="config-keyboard-closed">
+				<button type="button" onclick="htmlToggleConfig('config-keyboard', true)">Keyboard Config</button>
+			</div>
+			<div id="config-keyboard" class="hidden">
+				<button type="button" onclick="htmlToggleConfig('config-keyboard', false)">Hide Keyboard Config</button>
+				<div class="settings">
+					<table>
+						<tr>
+							<td>Move Forward</td>
+							<td><button type="button" onclick="setupKey('forward', this)"><script>document.currentScript.parentElement.innerHTML = input.gameKeys["forward"];</script></button></td>
+						</tr>
+						<tr>
+							<td>Move Backward</td>
+							<td><button type="button" onclick="setupKey('backward', this)"><script>document.currentScript.parentElement.innerHTML = input.gameKeys["backward"];</script></button></td>
+						</tr>
+						<tr>
+							<td>Turn Left</td>
+							<td><button type="button" onclick="setupKey('left', this)"><script>document.currentScript.parentElement.innerHTML = input.gameKeys["left"];</script></button></td>
+						</tr>
+						<tr>
+							<td>Turn Right</td>
+							<td><button type="button" onclick="setupKey('right', this)"><script>document.currentScript.parentElement.innerHTML = input.gameKeys["right"];</script></button></td>
+						</tr>
+						<tr>
+							<td>Strafe Left</td>
+							<td><button type="button" onclick="setupKey('strafeleft', this)"><script>document.currentScript.parentElement.innerHTML = input.gameKeys["strafeleft"];</script></button></td>
+						</tr>
+						<tr>
+							<td>Strafe Right</td>
+							<td><button type="button" onclick="setupKey('straferight', this)"><script>document.currentScript.parentElement.innerHTML = input.gameKeys["straferight"];</script></button></td>
+						</tr>
+						<tr>
+							<td>Speed On</td>
+							<td><button type="button" onclick="setupKey('run', this)"><script>document.currentScript.parentElement.innerHTML = input.gameKeys["run"];</script></button></td>
+						</tr>
+						<tr>
+							<td>Strafe On</td>
+							<td><button type="button" onclick="setupKey('strafe', this)"><script>document.currentScript.parentElement.innerHTML = input.gameKeys["strafe"];</script></button></td>
+						</tr>
+						<tr>
+							<td>Fire/Attack</td>
+							<td><button type="button" onclick="setupKey('fire', this)"><script>document.currentScript.parentElement.innerHTML = input.gameKeys["fire"];</script></button></td>
+						</tr>
+						<tr>
+							<td>Use</td>
+							<td><button type="button" onclick="setupKey('use', this)"><script>document.currentScript.parentElement.innerHTML = input.gameKeys["use"];</script></button></td>
+						</tr>
+					</table>
+					<input type="checkbox" onchange="input.autorun = this.checked"><label>Always run</label>
+				</div>
+			</div>
+		</div>
+		<div id="game" class="hidden">
+			<canvas id="jsdoom-canvas" width="320" height="200">Uh oh, your browser has Javascript disabled, or is too old. Fix that in order to play.</canvas>
+		</div>
 	</body>
 </html>

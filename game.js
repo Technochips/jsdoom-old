@@ -32,7 +32,10 @@ gamestates["game"].setMessage = function(message)
 }
 gamestates["game"].update = function()
 {
-
+	if(!demo.playingDemo && !menuactive)
+	{
+		input.setTicinputFromGameInput(this.player);
+	}
 }
 gamestates["game"].draw = function()
 {
@@ -52,9 +55,9 @@ gamestates["game"].draw = function()
 	"vertical: " + input.ticinput[this.player].vertical +
 	"\nstrafing: " + input.ticinput[this.player].strafing +
 	"\nturning: " + input.ticinput[this.player].turning +
-	"\nfire: " + input.ticinput[this.player].fire +
-	"\nuse: " + input.ticinput[this.player].use +
-	"\npause: " + input.ticinput[this.player].pause +
+	"\nfire: " + (input.ticinput[this.player].fire ? "yes" : "no") +
+	"\nuse: " + (input.ticinput[this.player].use ? "yes" : "no") +
+	"\npause: " + (input.ticinput[this.player].pause ? "yes" : "no") +
 	"\nsavedOn: " + input.ticinput[this.player].savedOn +
 	"\nweapon: " + input.ticinput[this.player].weapon, 0, 15);
 }

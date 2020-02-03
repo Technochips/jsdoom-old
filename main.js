@@ -102,7 +102,7 @@ function update()
 	gamestates[gamestate].update();
 	menu.update();
 	
-	input.removeFirstInputs();
+	input.removeKeysDown();
 }
 function draw()
 {
@@ -124,5 +124,3 @@ function quit()
 {
 	document.location.reload();
 }
-
-setShown("wad-selection");

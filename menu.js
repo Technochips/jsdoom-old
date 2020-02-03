@@ -156,28 +156,28 @@ menu.update = function()
 	{
 		if(menu.message.toPrint)
 		{
-			if(menu.message.routine) menu.message.routine(input.firstKeyPressed());
+			if(menu.message.routine) menu.message.routine(input.firstKeyDown());
 		}
-		if((input.firstInputs["Escape"] && !menu.message.toPrint) || ((input.firstInputs["Escape"]||input.firstInputs["KeyN"]) && menu.message.toPrint && menu.message.needsInput) || (input.hasKeyPressed() && menu.message.toPrint && !menu.message.needsInput))
+		if((input.keysDown["Escape"] && !menu.message.toPrint) || ((input.keysDown["Escape"]||input.keysDown["KeyN"]) && menu.message.toPrint && menu.message.needsInput) || (input.hasKeyPressed() && menu.message.toPrint && !menu.message.needsInput))
 		{
 			menu.unpause();
 			sound.playSound("SWTCHX");
 			return;
 		}
 		if(menu.message.toPrint) return;
-		if(input.firstInputs["ArrowUp"])
+		if(input.keysDown["ArrowUp"])
 		{
 			this.itemOn--;
 			if(this.itemOn < 0) this.itemOn = menu[this.currentMenu].numitems-1;
 			sound.playSound("PSTOP");
 		}
-		else if(input.firstInputs["ArrowDown"])
+		else if(input.keysDown["ArrowDown"])
 		{
 			this.itemOn++;
 			if(this.itemOn >= menu[this.currentMenu].numitems) this.itemOn = 0;
 			sound.playSound("PSTOP");
 		}
-		else if(input.firstInputs["Backspace"])
+		else if(input.keysDown["Backspace"])
 		{
 			if(menu[this.currentMenu].prevMenu)
 			{
@@ -185,7 +185,7 @@ menu.update = function()
 				sound.playSound("SWTCHN");
 			}
 		}
-		else if(input.firstInputs["Enter"])
+		else if(input.keysDown["Enter"])
 		{
 			if(menu[this.currentMenu].menuitems[this.itemOn].routine)
 				menu[this.currentMenu].menuitems[this.itemOn].routine(this.itemOn);
@@ -198,7 +198,7 @@ menu.update = function()
 			{
 				x++;
 				if(x >= menu[this.currentMenu].numitems) x = 0;
-				if(menu[this.currentMenu].menuitems[x].alphaKey == input.firstKeyPressed())
+				if(menu[this.currentMenu].menuitems[x].alphaKey == input.firstKeyDown())
 				{
 					this.itemOn = x;
 					sound.playSound("PSTOP");
@@ -209,7 +209,7 @@ menu.update = function()
 	}
 	else
 	{
-		if(input.firstInputs["Escape"])
+		if(input.keysDown["Escape"])
 		{
 			menu.pause();
 			sound.playSound("SWTCHN");
