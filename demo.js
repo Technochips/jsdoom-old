@@ -65,9 +65,9 @@ class Demo
 demo.loadDemo = function(lump)
 {
 	demo.currentDemo = new Demo(lump);
+	changeState("game", onTitle, demo.currentDemo.map, demo.currentDemo.episode, demo.currentDemo.skill, demo.currentDemo.p, demo.currentDemo.player)
 	demo.playingDemo = true;
 	demo.frame = 0;
-	changeState("game", onTitle, demo.currentDemo.map, demo.currentDemo.episode, demo.currentDemo.skill, demo.currentDemo.p, demo.currentDemo.player)
 }
 
 demo.update = function()

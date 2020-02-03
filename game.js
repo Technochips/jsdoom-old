@@ -8,9 +8,15 @@ gamestates["game"].player = 0;
 
 gamestates["game"].debugShowInputs = true;
 
+gamestates["game"].message = "";
+gamestates["game"].messageOff = 0;
+
 
 gamestates["game"].changedTo = function(map, episode, skill, players, player)
 {
+	demo.playingDemo = false;
+	input.resetTicinput();
+
 	this.map = map;
 	this.episode = episode;
 	this.skill = skill;
@@ -18,6 +24,11 @@ gamestates["game"].changedTo = function(map, episode, skill, players, player)
 	this.player = player;
 
 	this.mapname = gamemode == "commercial" ? ("MAP" + String(map).padStart(2, "0")) : ("E" + episode + "M" + this.map);
+}
+gamestates["game"].setMessage = function(message)
+{
+	this.messageOff = gametic+140;
+	this.message = message;
 }
 gamestates["game"].update = function()
 {
@@ -32,6 +43,11 @@ gamestates["game"].draw = function()
 			graphics.drawPixel(0, x, y)
 		}
 	}
+	if(gametic < this.messageOff)
+	{
+		font.drawText(this.message, 0, 0);
+	}
+
 	if(this.debugShowInputs) font.drawText(
 	"vertical: " + input.ticinput[this.player].vertical +
 	"\nstrafing: " + input.ticinput[this.player].strafing +
