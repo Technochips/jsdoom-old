@@ -44,7 +44,17 @@ class Demo
 			{
 				if(this.p[P])
 				{
-					this.frames[f][P] = new TicInput(lump.lumpDataView.getInt8(i+P), lump.lumpDataView.getInt8(i+P+1), lump.lumpDataView.getInt8(i+P+2));
+					var flag = lump.lumpDataView.getUint8(i+P+3).toString(2).padStart(8, "0");
+					var specialMode = flag.charAt(0) != 0;
+					this.frames[f][P] = new TicInput(
+						lump.lumpDataView.getInt8(i+P),
+						lump.lumpDataView.getInt8(i+P+1),
+						lump.lumpDataView.getInt8(i+P+2),
+						specialMode ? false : (flag.charAt(7) != 0),
+						specialMode ? false : (flag.charAt(6) != 0),
+						!specialMode ? false : (flag.charAt(7) != 0),
+						!specialMode ? 0 : ((flag.charAt(6) != 0) ? (parseInt(flag.substring(3, 6), 2)+1) : 0),
+						specialMode ? 0 : ((flag.charAt(5) != 0) ? (parseInt(flag.substring(2, 5), 2)+1) : 0));
 				}
 			}
 			f++;
@@ -57,7 +67,7 @@ demo.loadDemo = function(lump)
 	demo.currentDemo = new Demo(lump);
 	demo.playingDemo = true;
 	demo.frame = 0;
-	changeState("game", demo.currentDemo.map, demo.currentDemo.episode, demo.currentDemo.skill)
+	changeState("game", onTitle, demo.currentDemo.map, demo.currentDemo.episode, demo.currentDemo.skill, demo.currentDemo.p, demo.currentDemo.player)
 }
 
 demo.update = function()
@@ -69,7 +79,7 @@ demo.update = function()
 		if(demo.frame >= demo.currentDemo.frames.length)
 		{
 			demo.playingDemo = false;
-			if(onTitle) changeState("title", false);
+			if(onTitle) changeState("title", true, false);
 			else quit();
 		}
 	}

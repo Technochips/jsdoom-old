@@ -12,8 +12,6 @@ var dt_ms = 0;
 var fast = false;
 var showFps = true;
 
-var onTitle = true;
-
 var gamemode = "indetermined";
 
 function loadFile()

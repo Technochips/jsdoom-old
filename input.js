@@ -6,17 +6,20 @@ class TicInput
 
 	fire;
 	use;
+	pause;
+	savedOn;
+
 	weapon;
-	specialMode;
-	constructor(vertical, strafing, turning, fire, use, weapon, specialMode)
+	constructor(vertical, strafing, turning, fire, use, pause, savedOn, weapon)
 	{
 		this.vertical = vertical;
 		this.strafing = strafing;
 		this.turning = turning;
 		this.fire = fire;
 		this.use = use;
+		this.pause = pause;
+		this.savedOn = savedOn;
 		this.weapon = weapon;
-		this.specialMode = specialMode;
 	}
 }
 
@@ -24,7 +27,11 @@ var input = {};
 input.inputs = [];
 input.firstInputs = [];
 
-input.ticinput = [];
+input.ticinput =[
+	new TicInput(0, 0, 0, false, false, false, 0, 0),
+	new TicInput(0, 0, 0, false, false, false, 0, 0),
+	new TicInput(0, 0, 0, false, false, false, 0, 0),
+	new TicInput(0, 0, 0, false, false, false, 0, 0)];
 
 input.removeFirstInputs = function()
 {
