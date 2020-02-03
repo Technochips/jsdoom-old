@@ -226,7 +226,7 @@ menu.verifyNightmare = function(ch)
 {
 	if(ch!="KeyY") return;
 	menuactive = false;
-	changeState("game", false, 1, gamemode == "commercial" ? 1 : menu.wantedEpisode, 4);
+	changeState("game", false, 1, gamemode == "commercial" ? 1 : menu.wantedEpisode, 4, [true, false, false, false], 0);
 	menu.message.toPrint = false;
 }
 
@@ -238,7 +238,7 @@ menu.skillRoutine = function(sk)
 		return;
 	}
 	menuactive = false;
-	changeState("game", false, 1, gamemode == "commercial" ? 1 : menu.wantedEpisode, sk);
+	changeState("game", false, 1, gamemode == "commercial" ? 1 : menu.wantedEpisode, sk, [true, false, false, false], 0);
 }
 
 menu["mainmenu"] = new Menu(
