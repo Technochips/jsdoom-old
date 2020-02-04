@@ -49,7 +49,7 @@ class Demo
 					this.frames[f][P] = new TicInput(
 						lump.lumpDataView.getInt8(i+P),
 						lump.lumpDataView.getInt8(i+P+1),
-						lump.lumpDataView.getInt8(i+P+2)*2,
+						parseInt(shiftString(lump.lumpDataView.getInt8(i+P+2).toString(2).padStart(32, "0"),-8),2),
 						specialMode ? false : (flag.charAt(7) != 0),
 						specialMode ? false : (flag.charAt(6) != 0),
 						!specialMode ? false : (flag.charAt(7) != 0),

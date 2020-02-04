@@ -52,12 +52,12 @@ gamestates["game"].draw = function()
 	}
 
 	if(this.debugShowInputs) font.drawText(
-	"vertical: " + input.ticinput[this.player].vertical +
+	"\nforward: " + input.ticinput[this.player].forward +
 	"\nstrafing: " + input.ticinput[this.player].strafing +
-	"\nturning: " + input.ticinput[this.player].turning +
+	"\nangleturn: " + input.ticinput[this.player].angleturn +
 	"\nfire: " + (input.ticinput[this.player].fire ? "yes" : "no") +
 	"\nuse: " + (input.ticinput[this.player].use ? "yes" : "no") +
 	"\npause: " + (input.ticinput[this.player].pause ? "yes" : "no") +
 	"\nsavedOn: " + input.ticinput[this.player].savedOn +
-	"\nweapon: " + input.ticinput[this.player].weapon, 0, 15);
+	"\nweapon: " + input.ticinput[this.player].weapon, 0, 0);
 }

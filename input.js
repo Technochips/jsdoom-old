@@ -1,8 +1,8 @@
 class TicInput
 {
-	vertical;
+	forward;
 	strafing;
-	turning;
+	angleturn;
 
 	fire;
 	use;
@@ -10,11 +10,11 @@ class TicInput
 	savedOn;
 
 	weapon;
-	constructor(vertical, strafing, turning, fire, use, pause, savedOn, weapon)
+	constructor(forward, strafing, angleturn, fire, use, pause, savedOn, weapon)
 	{
-		this.vertical = vertical;
+		this.forward = forward;
 		this.strafing = strafing;
-		this.turning = turning;
+		this.angleturn = angleturn;
 		this.fire = fire;
 		this.use = use;
 		this.pause = pause;
@@ -32,6 +32,15 @@ input.gameKeysPressed = [];
 input.gameKeysDown = [];
 
 input.autorun = false;
+
+input.speeds = {};
+input.speeds.forwardMove = [0x19, 0x32];
+input.speeds.sideMove = [0x18, 0x28];
+input.speeds.angleturn = [640, 1280, 320];
+input.speeds.maxplmove = input.speeds.forwardMove[1];
+
+input.turnheld = 0;
+input.slowturntics = 6;
 
 input.gameKeyReset = function()
 {
@@ -66,32 +75,53 @@ input.resetTicinput();
 
 input.setTicinputFromGameInput = function(player)
 {
-	var running = this.gameKeysPressed.run || input.autorun;
+	var speed = (this.gameKeysPressed.run || this.autorun) ? 1 : 0;
 
-	if(this.gameKeysPressed.forward && !this.gameKeysPressed.backward)
-		input.ticinput[player].vertical = running ? 50 : 24;
-	else if(!this.gameKeysPressed.forward && this.gameKeysPressed.backward)
-		input.ticinput[player].vertical = running ? -50 : -24;
-	else
-		input.ticinput[player].vertical = 0;
-	
-	if(this.gameKeysPressed.straferight && !this.gameKeysPressed.strafeleft)
-		input.ticinput[player].strafing = running ? 40 : 24;
-	else if(!this.gameKeysPressed.straferight && this.gameKeysPressed.strafeleft)
-		input.ticinput[player].strafing = running ? -40 : -24;
-	else
-		input.ticinput[player].strafing = 0;
-	
-	input.ticinput[player].fire = this.gameKeysPressed.fire;
-	input.ticinput[player].use = this.gameKeysPressed.use;
-	input.ticinput[player].pause = this.keysPressed["Pause"];
+	this.ticinput[player].forward = 0;
+	this.ticinput[player].strafing = 0;
+	this.ticinput[player].angleturn = 0;
 
-	input.ticinput[player].weapon = 0;
+	if(this.gameKeysPressed.left || this.gameKeysPressed.right)
+		this.turnheld++;
+	else
+		this.turnheld = 0;
+	
+	var tspeed = (this.turnheld < this.slowturntics) ? 2 : speed;
+	if(this.gameKeysPressed.strafe)
+	{
+		if(this.gameKeysPressed.right)
+			this.ticinput[player].strafing += this.speeds.sideMove[speed];
+		if(this.gameKeysPressed.left)
+			this.ticinput[player].strafing -= this.speeds.sideMove[speed];
+	}
+	else
+	{
+		if(this.gameKeysPressed.right)
+			this.ticinput[player].angleturn -= this.speeds.angleturn[tspeed];
+		if(this.gameKeysPressed.left)
+			this.ticinput[player].angleturn += this.speeds.angleturn[tspeed];
+	}
+
+	if(this.gameKeysPressed.forward)
+		this.ticinput[player].forward += this.speeds.forwardMove[speed];
+	if(this.gameKeysPressed.backward)
+		this.ticinput[player].forward -= this.speeds.forwardMove[speed];
+	
+	if(this.gameKeysPressed.straferight)
+		this.ticinput[player].strafing += this.speeds.sideMove[speed];
+	if(this.gameKeysPressed.strafeleft)
+		this.ticinput[player].strafing -= this.speeds.sideMove[speed];
+	
+	this.ticinput[player].fire = this.gameKeysPressed.fire;
+	this.ticinput[player].use = this.gameKeysPressed.use;
+	this.ticinput[player].pause = this.keysPressed["Pause"];
+
+	this.ticinput[player].weapon = 0;
 	for(var i = 1; i <= 7; i++)
 	{
 		if(this.keysDown["Digit" + i])
 		{
-			input.ticinput[player].weapon = i;
+			this.ticinput[player].weapon = i;
 			break;
 		}
 	}

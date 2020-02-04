@@ -6,6 +6,7 @@ function changeState(state, isTitle, ...args)
 {
 	if(gamestates[state])
 	{
+		playpal.current = 0;
 		gamestate = state;
 		gamestates[state].changedTo(...args);
 		wipe.startWiping();
