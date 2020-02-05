@@ -11,6 +11,8 @@ gamestates["game"].debugShowInputs = true;
 gamestates["game"].message = "";
 gamestates["game"].messageOff = 0;
 
+gamestates["game"].level;
+
 
 gamestates["game"].changedTo = function(map, episode, skill, players, player)
 {
@@ -24,6 +26,8 @@ gamestates["game"].changedTo = function(map, episode, skill, players, player)
 	this.player = player;
 
 	this.mapname = gamemode == "commercial" ? ("MAP" + String(map).padStart(2, "0")) : ("E" + episode + "M" + this.map);
+
+	this.level = new Level(this.mapname);
 }
 gamestates["game"].setMessage = function(message)
 {

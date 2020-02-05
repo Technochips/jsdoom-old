@@ -242,7 +242,7 @@ menu.episodeRoutine = function(ep)
 		menu.message.startMessage(doom_txt["SWSTRING"], null, false);
 		return;
 	}
-	menu.wantedEpisode = ep;
+	menu.wantedEpisode = ep+1;
 	menu.SetupNextMenu("newgame");
 }
 

@@ -10,6 +10,7 @@ var dt_fps = 0;
 var dt_ms = 0;
 
 var fast = false;
+var drawing = true;
 var showFps = true;
 
 var quitting = false;
@@ -83,14 +84,14 @@ function run(dt)
 	if(!wipe.gonnaWipe && !quitting)
 	{
 		update();
-		draw();
+		if(drawing) draw();
 	}
 	if(wipe.gonnaWipe)
 	{
 		wipe.wipe();
 	}
 	if(showFps) font.drawText("fps: " + dt_fps.toFixed(2) + "\nms: " + dt_ms.toFixed(2), 0, 186);
-	graphics.applyBuffer();
+	if(drawing) graphics.applyBuffer();
 	var dt_later = performance.now();
 	setTimeout(run, fast ? 0 : ms - (dt_later-dt_now), [dt_now]);
 }

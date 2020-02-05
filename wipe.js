@@ -5,6 +5,7 @@ wipe.wiping = false;
 wipe.startScreen;
 wipe.endScreen;
 wipe.columns = [];
+wipe.wipes = true;
 
 wipe.startWiping = function()
 {
@@ -23,6 +24,11 @@ wipe.end = function()
 }
 wipe.wipe = function()
 {
+	if(!wipe.wipes || !drawing)
+	{
+		wipe.end();
+		return;
+	}
 	var w = graphics.width/2;
 	if(!wipe.wiping)
 	{

@@ -48,4 +48,13 @@ class WAD
 	{
 		for(var i = 0; i < this.lumpCount; i++) if(this.lumps[i].name == lump) return this.lumps[i];
 	}
+	getFirstLumpIndex(lump)
+	{
+		for(var i = 0; i < this.lumpCount; i++) if(this.lumps[i].name == lump) return i;
+	}
+	getFirstLumpAfter(lump, after)
+	{
+		var a = this.getFirstLumpIndex(after);
+		if(a) for(var i = a; i < this.lumpCount; i++) if(this.lumps[i].name == lump) return this.lumps[i];
+	}
 }
