@@ -114,7 +114,7 @@ input.setTicinputFromGameInput = function(player)
 	
 	this.ticinput[player].fire = this.gameKeysPressed.fire;
 	this.ticinput[player].use = this.gameKeysPressed.use;
-	this.ticinput[player].pause = this.keysPressed["Pause"];
+	this.ticinput[player].pause = this.keysDown["Pause"];
 
 	this.ticinput[player].weapon = 0;
 	for(var i = 1; i <= 7; i++)

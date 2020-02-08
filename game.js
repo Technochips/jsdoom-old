@@ -6,6 +6,8 @@ gamestates["game"].mapname;
 gamestates["game"].players = [true, false, false, false];
 gamestates["game"].player = 0;
 
+gamestates["game"].paused = false;
+
 gamestates["game"].debugShowInputs = true;
 
 gamestates["game"].message = "";
@@ -13,8 +15,11 @@ gamestates["game"].messageOff = 0;
 
 gamestates["game"].level;
 
+gamestates["game"].time = 0;
+gamestates["game"].timeTotal = 0;
 
-gamestates["game"].changedTo = function(map, episode, skill, players, player)
+
+gamestates["game"].changedTo = function(map = 1, episode = 1, skill = 2, players = [true, false, false, false], player = 0, reset = true)
 {
 	demo.playingDemo = false;
 	input.resetTicinput();
@@ -24,6 +29,9 @@ gamestates["game"].changedTo = function(map, episode, skill, players, player)
 	this.skill = skill;
 	this.players = players;
 	this.player = player;
+
+	this.time = 0;
+	if(reset) this.timeTotal = 0;
 
 	this.mapname = gamemode == "commercial" ? ("MAP" + String(map).padStart(2, "0")) : ("E" + episode + "M" + this.map);
 
@@ -36,9 +44,14 @@ gamestates["game"].setMessage = function(message)
 }
 gamestates["game"].update = function()
 {
-	if(!demo.playingDemo && !menuactive)
+	demo.update();
+	if(!demo.playingDemo) input.setTicinputFromGameInput(this.player);
+	if(input.ticinput[this.player].pause) this.paused = !this.paused;
+	var m = menuactive && !onTitle;
+	if(!this.paused && !m)
 	{
-		input.setTicinputFromGameInput(this.player);
+		this.time++;
+		this.timeTotal++;
 	}
 }
 gamestates["game"].draw = function()
@@ -50,11 +63,13 @@ gamestates["game"].draw = function()
 			graphics.drawPixel(0, x, y)
 		}
 	}
-	this.level.rootNode.draw(0,0,0);
+	var spawn = this.level.getFirstThing(1);
+	this.level.rootNode.draw(spawn.x,spawn.y,0);
 	if(gametic < this.messageOff)
 	{
 		font.drawText(this.message, 0, 0);
 	}
+	if(this.paused) Patch.drawPatch("M_PAUSE", 126, 4);
 
 	if(this.debugShowInputs) font.drawText(
 	"\nforward: " + input.ticinput[this.player].forward +

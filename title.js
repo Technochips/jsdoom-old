@@ -10,6 +10,15 @@ gamestates["title"].music =
 ];
 gamestates["title"].frame = 0;
 
+gamestates["title"].init = function()
+{
+	if(gamemode != "registered")
+	{
+		this.cycles.pop();
+		this.music.pop();
+	}
+}
+
 gamestates["title"].changedTo = function(reset)
 {
 	demo.playingDemo = false;

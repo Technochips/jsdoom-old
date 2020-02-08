@@ -53,6 +53,6 @@ class WAD
 	getFirstLumpAfter(lump, after)
 	{
 		var a = this.getFirstLumpIndex(after);
-		if(a) for(var i = a; i < this.lumpCount; i++) if(this.lumps[i].name == lump) return this.lumps[i];
+		if(a != null) for(var i = a; i < this.lumpCount; i++) if(this.lumps[i].name == lump) return this.lumps[i];
 	}
 }

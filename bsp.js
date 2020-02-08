@@ -1,3 +1,6 @@
+var traversalAnimation = true;
+var bspBoxes = false;
+
 class Node
 {
 	x;
@@ -60,25 +63,42 @@ class Node
 		var left = dx*parseInt(shiftString(this.dy.toString(2).padStart(32, "0"), 16),2);
 		var right = dy*parseInt(shiftString(this.dx.toString(2).padStart(32, "0"), 16),2);
 		return right < left;
+		/*var dx = x - this.x; //dunno from https://github.com/amroibrahim/DIYDoom/tree/Week009/tutorial
+		var dy = y - this.y;
+		return ((dx * this.dy) - (dy * this.dx) <= 0);*/
 	}
 
 	draw(ox, oy, angle, recursion = 0)
 	{
 		var a = this.pointOnSide(ox,oy) ? 1 : 0;
 		var b = a == 1 ? 0 : 1;
-		if(this.c[a]) this.c[a].draw(ox,oy,angle,recursion+1);
-		if(this.c[b]) this.c[b].draw(ox,oy,angle,recursion+1);
-		//var c = Math.min(111,recursion+80);
-		//var x = ox - (graphics.width/2);
-		//var y = oy - (graphics.height/2);
+		var x = (ox/16) - (graphics.width/2);
+		var y = (oy/16) - (graphics.height/2);
+		if(traversalAnimation && recursion > gamestates["game"].time) return recursion;
+		if(bspBoxes)
+		{
+			graphics.drawLine(112,Math.floor((this.bb[b][2]/16)-x),Math.floor((this.bb[b][0]/16)-y),Math.floor((this.bb[b][2]/16)-x),Math.floor((this.bb[b][1]/16)-y));
+			graphics.drawLine(112,Math.floor((this.bb[b][2]/16)-x),Math.floor((this.bb[b][1]/16)-y),Math.floor((this.bb[b][3]/16)-x),Math.floor((this.bb[b][1]/16)-y));
+			graphics.drawLine(112,Math.floor((this.bb[b][3]/16)-x),Math.floor((this.bb[b][1]/16)-y),Math.floor((this.bb[b][3]/16)-x),Math.floor((this.bb[b][0]/16)-y));
+			graphics.drawLine(112,Math.floor((this.bb[b][3]/16)-x),Math.floor((this.bb[b][0]/16)-y),Math.floor((this.bb[b][2]/16)-x),Math.floor((this.bb[b][0]/16)-y));
+
+			graphics.drawLine(176,Math.floor((this.bb[a][2]/16)-x),Math.floor((this.bb[a][0]/16)-y),Math.floor((this.bb[a][2]/16)-x),Math.floor((this.bb[a][1]/16)-y));
+			graphics.drawLine(176,Math.floor((this.bb[a][2]/16)-x),Math.floor((this.bb[a][1]/16)-y),Math.floor((this.bb[a][3]/16)-x),Math.floor((this.bb[a][1]/16)-y));
+			graphics.drawLine(176,Math.floor((this.bb[a][3]/16)-x),Math.floor((this.bb[a][1]/16)-y),Math.floor((this.bb[a][3]/16)-x),Math.floor((this.bb[a][0]/16)-y));
+			graphics.drawLine(176,Math.floor((this.bb[a][3]/16)-x),Math.floor((this.bb[a][0]/16)-y),Math.floor((this.bb[a][2]/16)-x),Math.floor((this.bb[a][0]/16)-y));
+		}
+		var c = 80;
 
 		/*if(this.c[a] && this.c[a].constructor.name == "Node")
 		{
 			graphics.drawLine(c, Math.floor((this.x/16)-x),Math.floor((this.y/16)-y),Math.floor((this.c[a].x/16)-x),Math.floor((this.c[a].y/16)-y));
-		}*/
-		/*if(this.c[b] && this.c[b].constructor.name == "Node")
+		}
+		if(this.c[b] && this.c[b].constructor.name == "Node")
 		{
 			graphics.drawLine(c, Math.floor((this.x/16)-x),Math.floor((this.y/16)-y),Math.floor((this.c[b].x/16)-x),Math.floor((this.c[b].y/16)-y));
 		}*/
+		if(this.c[a]) recursion = this.c[a].draw(ox,oy,angle,recursion+1);
+		if(this.c[b]) recursion = this.c[b].draw(ox,oy,angle,recursion+1);
+		return recursion;
 	}
 }

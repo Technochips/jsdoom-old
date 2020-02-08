@@ -14,10 +14,10 @@ class Subsector
 
 	draw(ox, oy, angle, recursion = 0)
 	{
-		if(recursion >= 32) return;
-		var c = recursion+80;
-		var x = ox - (graphics.width/2);
-		var y = oy - (graphics.height/2);
+		//if(recursion >= 8) return recursion;
+		var c = 80;//(recursion*4)+80;
+		var x = (ox/16) - (graphics.width/2);
+		var y = (oy/16) - (graphics.height/2);
 		for(var seg in this.segs)
 		{
 			var s = this.segs[seg].direction == 0 ? this.segs[seg].startvertex : this.segs[seg].endvertex;
@@ -30,5 +30,6 @@ class Subsector
 		}
 		var s = this.segs[this.segs.length-1].endvertex;
 		var e = this.segs[0].startvertex;
+		return recursion;
 	}
 }

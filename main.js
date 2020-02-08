@@ -61,6 +61,7 @@ function init()
 	window.addEventListener("keydown", onKeyDown, true);
 	window.addEventListener("keyup", onKeyUp, true);
 	
+	gamestates["title"].init();
 	menu.init();
 }
 
@@ -100,7 +101,6 @@ function update()
 {
 	gametic++;
 	graphics.update();
-	demo.update();
 	gamestates[gamestate].update();
 	menu.update();
 	

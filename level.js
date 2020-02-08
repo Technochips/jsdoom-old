@@ -12,55 +12,75 @@ class Level
 	subsectors;
 	nodes;
 	sectors;
+	things;
 
 	constructor(name)
 	{
 		this.name = name;
 		this.initializeLumps();
 		this.rootNode = new Node(this.lumps,this);
+		var j = Math.floor(this.lumps.things.lumpLength / 10);
+		for(var i = 0; i < j; i++)
+		{
+			this.getThing(i);
+		}
 	}
 
 	getNode(i)
 	{
-		if(!this.nodes) this.nodes = {};
+		if(!this.nodes) this.nodes = [];
 		if(!this.nodes[i]) this.nodes[i] = new Node(this.lumps, this, i);
 		return this.nodes[i];
 	}
 	getSubsector(i)
 	{
-		if(!this.subsectors) this.subsectors = {};
+		if(!this.subsectors) this.subsectors = [];
 		if(!this.subsectors[i]) this.subsectors[i] = new Subsector(this.lumps, this, i);
 		return this.subsectors[i];
 	}
 	getSeg(i)
 	{
-		if(!this.segs) this.segs = {};
+		if(!this.segs) this.segs = [];
 		if(!this.segs[i]) this.segs[i] = new Seg(this.lumps, this, i);
 		return this.segs[i];
 	}
 	getVertex(i)
 	{
-		if(!this.vertexes) this.vertexes = {};
+		if(!this.vertexes) this.vertexes = [];
 		if(!this.vertexes[i]) this.vertexes[i] = new Vertex(this.lumps, this, i);
 		return this.vertexes[i];
 	}
 	getLinedef(i)
 	{
-		if(!this.linedefs) this.linedefs = {};
+		if(!this.linedefs) this.linedefs = [];
 		if(!this.linedefs[i]) this.linedefs[i] = new Linedef(this.lumps, this, i);
 		return this.linedefs[i];
 	}
 	getSidedef(i)
 	{
-		if(!this.sidedefs) this.sidedefs = {};
+		if(!this.sidedefs) this.sidedefs = [];
 		if(!this.sidedefs[i]) this.sidedefs[i] = new Sidedef(this.lumps, this, i);
 		return this.sidedefs[i];
 	}
 	getSector(i)
 	{
-		if(!this.sectors) this.sectors = {};
+		if(!this.sectors) this.sectors = [];
 		if(!this.sectors[i]) this.sectors[i] = new Sector(this.lumps, this, i);
 		return this.sectors[i];
+	}
+	getThing(i)
+	{
+		if(!this.things) this.things = [];
+		if(!this.things[i]) this.things[i] = new Thing(this.lumps, this, i);
+		return this.things[i];
+	}
+	getFirstThing(type)
+	{
+		for(var i = 0; i < this.things.length; i++)
+		{
+			var t = this.getThing(i);
+			if(t && t.type == type) return t;
+		}
 	}
 
 	initializeLumps()
