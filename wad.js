@@ -17,8 +17,6 @@ class WAD
 		console.log("found " + this.lumpCount + " lumps in WAD.");
 		this.dirOffset = this.dataView.getInt32(8, true);
 		
-		var decoder = new TextDecoder("utf-8");
-		
 		for(var i = 0; i < this.lumpCount; i++)
 		{
 			this.lumps[i] = []

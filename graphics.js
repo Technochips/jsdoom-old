@@ -71,6 +71,52 @@ graphics.drawPixel = function(color, x, y)
 		}
 	}
 }
+graphics.drawLine = function(color, x0, y0, x1, y1)
+{
+	var dx = x1 - x0;
+	var ax = 2*Math.abs(dx);
+	var sx = dx<0?-1:1;
+	
+	var dy =  y1 - y0;
+	var ay = 2*Math.abs(dy);
+	var sy = dy<0?-1:1;
+
+	var x = x0;
+	var y = y0;
+	if(ax > ay)
+	{
+		var d = ay - ax / 2;
+		while(true)
+		{
+			graphics.drawPixel(color, x, y);
+			if(x == x1) return;
+			if(d>=0)
+			{
+				y += sy;
+				d -= ax;
+			}
+			x += sx;
+			d += ay;
+		}
+	}
+	else
+	{
+		var d = ax - ay / 2;
+		while(true)
+		{
+			graphics.drawPixel(color, x, y);
+			if(y == y1) return;
+			if(d >= 0)
+			{
+				x += sx;
+				d -= ay;
+			}
+			y += sy;
+			d += ax;
+		}
+	}
+}
+
 graphics.applyBuffer = function()
 {
 	if(this.useBuffer)

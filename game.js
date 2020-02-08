@@ -50,6 +50,7 @@ gamestates["game"].draw = function()
 			graphics.drawPixel(0, x, y)
 		}
 	}
+	this.level.rootNode.draw(0,0,0);
 	if(gametic < this.messageOff)
 	{
 		font.drawText(this.message, 0, 0);

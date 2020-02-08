@@ -28,6 +28,7 @@ function loadFile()
     reader.onload = function()
 	{
 		console.log("Loading WAD data...");
+		decoder = new TextDecoder("utf-8");
 		var data = reader.result;
 		wad = new WAD(data);
 		if(wad.getFirstLump("MAP02")) //map01 may be missing
