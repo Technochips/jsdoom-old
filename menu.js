@@ -6,6 +6,8 @@ menu.whichSkull = 0;
 menu.skullAnimCounter = 10;
 menu.skullName = ["M_SKULL1","M_SKULL2"];
 
+menu.paused;
+
 menu.message = {};
 menu.message.toPrint = false;
 menu.message.lastMenuActive;
@@ -76,7 +78,7 @@ class Menu
 
 menu.pause = function()
 {
-	this.SetupNextMenu("mainmenu", false)
+	this.setupNextMenu("mainmenu", false)
 	menuactive = true;
 }
 menu.unpause = function()
@@ -104,6 +106,8 @@ menu.init = function()
 
 menu.draw = function()
 {
+	if(this.paused) Patch.drawPatch("M_PAUSE", 126, 4);
+
 	if(this.message.toPrint)
 	{
 		var start = 0;
@@ -181,7 +185,7 @@ menu.update = function()
 		{
 			if(menu[this.currentMenu].prevMenu)
 			{
-				menu.SetupNextMenu(menu[this.currentMenu].prevMenu);
+				menu.setupNextMenu(menu[this.currentMenu].prevMenu);
 				sound.playSound("SWTCHN");
 			}
 		}
@@ -209,6 +213,10 @@ menu.update = function()
 	}
 	else
 	{
+		for(var p in input.ticinput) 
+		{
+			if(input.ticinput[p].pause) this.paused = !this.paused;
+		}
 		if(input.keysDown["Escape"])
 		{
 			menu.pause();
@@ -224,7 +232,7 @@ menu.update = function()
 	}
 }
 
-menu.SetupNextMenu = function(m, playSound)
+menu.setupNextMenu = function(m, playSound)
 {
 	if(menu[m])
 	{
@@ -243,7 +251,7 @@ menu.episodeRoutine = function(ep)
 		return;
 	}
 	menu.wantedEpisode = ep+1;
-	menu.SetupNextMenu("newgame");
+	menu.setupNextMenu("newgame");
 }
 
 menu.verifyNightmare = function(ch)
@@ -272,9 +280,9 @@ menu["mainmenu"] = new Menu(
 		new Menuitem(1, "M_NGAME", "KeyN", ()=>
 		{
 			if(gamemode == "commercial")
-				menu.SetupNextMenu("newgame");
+				menu.setupNextMenu("newgame");
 			else
-				menu.SetupNextMenu("episode");
+				menu.setupNextMenu("episode");
 		}),
 		new Menuitem(1, "M_OPTION", "KeyO", null),
 		new Menuitem(1, "M_LOADG", "KeyL", null),

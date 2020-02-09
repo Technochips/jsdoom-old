@@ -12,5 +12,6 @@ function changeState(state, isTitle, ...args)
 		wipe.startWiping();
 		console.log("Switching to state \"" + state + "\"");
 		onTitle = isTitle;
+		menu.paused = false;
 	}
 }

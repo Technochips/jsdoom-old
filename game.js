@@ -6,12 +6,10 @@ gamestates["game"].mapname;
 gamestates["game"].players = [true, false, false, false];
 gamestates["game"].player = 0;
 
-gamestates["game"].paused = false;
-
 gamestates["game"].debugShowInputs = true;
 
 gamestates["game"].message = "";
-gamestates["game"].messageOff = 0;
+gamestates["game"].messageAway = 0;
 
 gamestates["game"].level;
 
@@ -37,18 +35,20 @@ gamestates["game"].changedTo = function(map = 1, episode = 1, skill = 2, players
 
 	this.level = new Level(this.mapname);
 }
-gamestates["game"].setMessage = function(message)
+gamestates["game"].setMessage = function(message, override = false)
 {
-	this.messageOff = gametic+140;
-	this.message = message;
+	if(gamestate == "game")
+	{
+		this.messageAway = gametic+140;
+		this.message = message;
+	}
 }
 gamestates["game"].update = function()
 {
 	demo.update();
 	if(!demo.playingDemo) input.setTicinputFromGameInput(this.player);
-	if(input.ticinput[this.player].pause) this.paused = !this.paused;
 	var m = menuactive && !onTitle;
-	if(!this.paused && !m)
+	if(!menu.paused && !m)
 	{
 		this.time++;
 		this.timeTotal++;
@@ -65,11 +65,10 @@ gamestates["game"].draw = function()
 	}
 	var spawn = this.level.getFirstThing(1);
 	this.level.rootNode.draw(spawn.x,spawn.y,0);
-	if(gametic < this.messageOff)
+	if(gametic < this.messageAway)
 	{
 		font.drawText(this.message, 0, 0);
 	}
-	if(this.paused) Patch.drawPatch("M_PAUSE", 126, 4);
 
 	if(this.debugShowInputs) font.drawText(
 	"\nforward: " + input.ticinput[this.player].forward +
