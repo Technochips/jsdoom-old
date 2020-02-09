@@ -31,7 +31,7 @@ gamestates["title"].update = function()
 	this.frame++;
 	if(!this.cycles[this.cycle] || this.frame >= 175)
 	{
-		demo.loadDemo(wad.getFirstLump("DEMO" + (this.cycle+1)));
+		demo.loadDemo(wad.getLastLump("DEMO" + (this.cycle+1)));
 	}
 }
 gamestates["title"].draw = function()

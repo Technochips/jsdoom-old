@@ -19,16 +19,17 @@ var gamemode = "indetermined";
 
 function loadFile()
 {
+	decoder = new TextDecoder("utf-8");
 	setShown("game");
 	var canvas = document.getElementById("jsdoom-canvas");
 
 	graphics.init(canvas);
 
 	var reader = new FileReader();
+	var i = 0;
     reader.onload = function()
 	{
 		console.log("Loading WAD data...");
-		decoder = new TextDecoder("utf-8");
 		var data = reader.result;
 		wad = new WAD(data);
 		if(wad.getFirstLump("MAP02")) //map01 may be missing
@@ -47,7 +48,20 @@ function loadFile()
 		{
 			gamemode = "retail";
 		}
-		init();
+		if(document.getElementsByName("pwad")[0].files.length > 0)
+		{
+			reader.onload = function()
+			{
+				console.log("Loading PWAD " + i + "'s data...");
+				var data = reader.result;
+				wad.loadPwad(new WAD(data));
+				i++;
+				if(i < document.getElementsByName("pwad")[0].files.length) reader.readAsArrayBuffer(document.getElementsByName("pwad")[0].files[i]);
+				else init();
+			}
+			reader.readAsArrayBuffer(document.getElementsByName("pwad")[0].files[i]);
+		}
+		else init();
     }
 	console.log("Reading file");
 	reader.readAsArrayBuffer(document.getElementsByName("iwad")[0].files[0]);
@@ -101,8 +115,8 @@ function update()
 {
 	gametic++;
 	graphics.update();
-	gamestates[gamestate].update();
 	menu.update();
+	gamestates[gamestate].update();
 	
 	input.removeKeysDown();
 }

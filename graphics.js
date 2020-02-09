@@ -50,7 +50,7 @@ graphics.update = function()
 		if(playpal.current > 9) playpal.current --; //DEBUG STUFF
 		else
 		{
-			if(frame % fps === 0) playpal.current = 12;
+			if(gametic % fps === 0) playpal.current = 12;
 			else playpal.current = 0;
 		}
 	}	

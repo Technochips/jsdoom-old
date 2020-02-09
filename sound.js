@@ -33,7 +33,7 @@ sound.playSound = function(filename)
 	var file = "DS" + filename;
 	if(!sound.sounds[file])
 	{
-		var l = wad.getFirstLump(file);
+		var l = wad.getLastLump(file);
 		if(!l) return;
 		sound.sounds[file] = new Sound(l);
 	}

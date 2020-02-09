@@ -20,5 +20,4 @@ playpal.loadPalette = function(lump)
 		this.playpal[k] = []
 		for(var j = 0; j < 256; j++) this.playpal[k][j] = [lump.lumpDataView.getUint8((k*768)+(j*3)),lump.lumpDataView.getUint8((k*768)+(j*3+1)),lump.lumpDataView.getUint8((k*768)+(j*3+2))];
 	}
-	console.log("Loaded " + l + " palettes.");
 }

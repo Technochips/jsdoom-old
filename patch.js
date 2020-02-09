@@ -55,7 +55,7 @@ class Patch
 	{
 		if(!patches[lump] && wad)
 		{
-			var l = wad.getFirstLump(lump);
+			var l = wad.getLastLump(lump);
 			if(l) patches[lump] = new Patch(l);
 		}
 		return patches[lump];
