@@ -19,6 +19,8 @@ gamestates["game"].timeTotal = 0;
 
 gamestates["game"].changedTo = function(map = 1, episode = 1, skill = 2, players = [true, false, false, false], player = 0, reset = true)
 {
+	if(reset) M_ClearRandom();
+
 	demo.playingDemo = false;
 	input.resetTicinput();
 
@@ -51,7 +53,6 @@ gamestates["game"].update = function()
 	if(!menu.paused && !m)
 	{
 		this.time++;
-		this.timeTotal++;
 	}
 }
 gamestates["game"].draw = function()
