@@ -65,7 +65,7 @@ gamestates["game"].draw = function()
 		}
 	}
 	var spawn = this.level.getFirstThing(1);
-	this.level.rootNode.draw(spawn.x,spawn.y,0);
+	this.level.rootNode.draw(spawn.x,spawn.y,spawn.angle);
 	if(gametic < this.messageAway)
 	{
 		font.drawText(this.message, 0, 0);

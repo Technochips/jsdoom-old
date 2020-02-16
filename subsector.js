@@ -16,17 +16,20 @@ class Subsector
 	{
 		//if(recursion >= 8) return recursion;
 		var c = 80;//(recursion*4)+80;
-		var x = (ox/16) - (graphics.width/2);
-		var y = (oy/16) - (graphics.height/2);
+		var a = (angle-90)*(Math.PI/180);
+		var angcos = Math.cos(a);
+		var angsin = Math.sin(a);
+		var x = (ox)*angcos-(-oy)*angsin - (graphics.width/2);
+		var y = (ox)*angsin+(-oy)*angcos - (graphics.height/2);
 		for(var seg in this.segs)
 		{
 			var s = this.segs[seg].direction == 0 ? this.segs[seg].startvertex : this.segs[seg].endvertex;
 			var e = this.segs[seg].direction == 1 ? this.segs[seg].startvertex : this.segs[seg].endvertex;
 			graphics.drawLine(c,
-			Math.floor((s.x/16)-x),
-			Math.floor((s.y/16)-y),
-			Math.floor((e.x/16)-x),
-			Math.floor((e.y/16)-y));
+			Math.floor((s.x*angcos - -s.y*angsin)-x),
+			Math.floor((s.x*angsin + -s.y*angcos)-y),
+			Math.floor((e.x*angcos - -e.y*angsin)-x),
+			Math.floor((e.x*angsin + -e.y*angcos)-y));
 		}
 		var s = this.segs[this.segs.length-1].endvertex;
 		var e = this.segs[0].startvertex;
